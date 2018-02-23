@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <type_traits>
 #include <vector>
 #include "../utils/null-ostream.h"
@@ -11,13 +12,25 @@
 
 namespace opt {
 
+/*
+template<typename T>
+concept bool typenameMutable = 
+    requires(T t, T u, UniformRandomBitGenerator g) {
+	mutation(t,g) -> T;
+	crossover(t,u,g) -> T;
+    };
+*/
+
 template<typename bits32>
 class BitwiseLiteral32 {
 	uint32_t literal;
 public:
 	BitwiseLiteral32(const bits32& l = bits32()) : literal(*reinterpret_cast<const uint32_t*>(&l)) { }
+	BitwiseLiteral32(const uint32_t& l) : literal(l) { }
 	operator bits32() const { return *reinterpret_cast<const bits32*>(&literal); }
 	BitwiseLiteral32& operator=(const bits32& l) { literal = *reinterpret_cast<const uint32_t*>(&l); return (*this); }
+	BitwiseLiteral32& operator=(const uint32_t& l) { literal = l; return (*this); }
+
 
 	template<typename RNG>
 	BitwiseLiteral32<bits32> mutation(RNG& random) {
@@ -44,13 +57,19 @@ class BitwiseLiteral64 {
 	uint64_t literal;
 public:
 	BitwiseLiteral64(const bits64& l = bits64()) : literal(*reinterpret_cast<const uint64_t*>(&l)) { }
+	BitwiseLiteral64(const uint64_t& l) : literal(l) { }
 	operator bits64() const { return *reinterpret_cast<const bits64*>(&literal); }
 	BitwiseLiteral64& operator=(const bits64& l) { literal = *reinterpret_cast<const uint64_t*>(&l); return (*this); }
+	BitwiseLiteral64& operator=(const uint64_t& l) { literal = l; return (*this); }
 
 	template<typename RNG>
 	BitwiseLiteral64<bits64> mutation(RNG& random) const {
 		std::uniform_int_distribution<int> sample(0,63);
 		int bit = sample(random);
+//		std::cerr<<std::dec<<bit<<std::endl<<
+//			"    "<<std::hex<<std::setw(16)<<literal<<std::endl<<
+//			"    "<<std::hex<<std::setw(16)<<(uint64_t(1)<<bit)<<std::endl<<
+//			"    "<<std::hex<<std::setw(16)<<(literal ^ (uint64_t(1)<<bit))<<std::endl;
 		return BitwiseLiteral64<bits64>(literal ^ (uint64_t(1)<<bit));
 	}
 
@@ -61,7 +80,7 @@ public:
 		std::uniform_int_distribution<int> sample(1,62);
 		int splitat = sample(random);
 
-		return BitwiseLiteral64(
+		return BitwiseLiteral64<bits64>(
 			(literal & (uint64_t(~0) << splitat)) &
 			(literal2 & (uint64_t(~0) >> (64 - splitat)))
 		);
@@ -152,7 +171,7 @@ public:
 			for (unsigned int m = 0; m<nmutations_; ++m) {
 				int chosen = sample_mutation(random);
 				XType mutation = vbest[chosen].mutation(random);
-				os<<"Mutating: "<<vbest[chosen]<<" -> "<<mutation<<std::endl;
+//				os<<"Mutating: "<<vbest[chosen]<<" -> "<<mutation<<std::endl;
 				population.insert(mutation);
 			}
 
@@ -164,7 +183,7 @@ public:
 			{
 				vbest.push_back(*itpop);
 				std::push_heap(vbest.begin(), vbest.end(), cmp);
-				if (vbest.size() > best_for_mutation_) {
+				if (vbest.size() > best_for_crossover_) {
 					std::pop_heap(vbest.begin(), vbest.end(), cmp);
 					vbest.pop_back();
 				}
