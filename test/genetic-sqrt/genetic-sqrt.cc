@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 		if (strcmp("-sqrt-of", argv[i])==0) sqrt_of = atof(argv[++i]);
 	}
 	
-	opt::Genetic method(10000, 220, 1000, 220, 1000);
+	opt::Genetic method(10000, 10, 1000, 10, 1000);
 
 	//We try to find the square root of a number based on its square.
 	//The function to minimize is (a - x*x)^2)

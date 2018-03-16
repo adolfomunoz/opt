@@ -16,7 +16,7 @@ namespace opt {
 template<typename T>
 concept bool typenameMutable = 
     requires(T t, T u, UniformRandomBitGenerator g) {
-	mutation(t,g) -> T;
+	mutation(t,g) -> T; 
 	crossover(t,u,g) -> T;
     };
 */
