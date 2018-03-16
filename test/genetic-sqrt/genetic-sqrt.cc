@@ -1,4 +1,4 @@
-#include "../../methods/genetic.h"
+#include "../../opt.h"
 #include <iostream>
 #include <cstring>
 

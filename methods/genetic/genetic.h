@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../../utils/null-ostream.h"
 #include <iostream>
 #include <iomanip>
 #include <type_traits>
 #include <vector>
-#include "../utils/null-ostream.h"
 #include <random>
 #include <set>
 #include <algorithm>
