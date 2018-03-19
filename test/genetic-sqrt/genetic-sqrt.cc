@@ -14,7 +14,11 @@ int main(int argc, char** argv) {
 	//We try to find the square root of a number based on its square.
 	//The function to minimize is (a - x*x)^2)
 	
-	float sol = method.minimize(0.0,[=] (float x) { return (sqrt_of - x*x)*(sqrt_of - x*x); }, 1.e-10f, std::cout); 
+	float sol = method.minimize(std::array<float,1>{{0.0f}},
+			[=] (float x) { return (sqrt_of - x*x)*(sqrt_of - x*x); }, 
+			[] (const float& x, auto& rng) { return opt::mutation32bit<float, std::mt19937>(x,rng); },
+			[] (const float& x1, const float& x2, auto& rng) { return opt::crossover32bit<float, std::mt19937>(x1,x2,rng); },
+			1.e-10f, std::cout); 
 
 	//We start in 0
 	std::cout<<sol<<std::endl;
