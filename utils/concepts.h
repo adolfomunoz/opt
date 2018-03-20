@@ -2,8 +2,8 @@
 
 template <typename RNG>
 concept bool UniformRandomBitGenerator = 
-//   requires { typename RNG::value_type; }  
-//   && 
+   requires { typename RNG::result_type; }  
+   && 
    requires(RNG a) {
 	a.max();
 	a.min();
