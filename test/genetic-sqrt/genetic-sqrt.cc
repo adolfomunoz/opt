@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 			[=] (float x) { return (sqrt_of - x*x)*(sqrt_of - x*x); }, 
 			opt::mutation32bit_swap<float, std::mt19937>,
 			opt::crossover32bit_onepoint<float, std::mt19937>,
-			1.e-5f, os); 
+			1.e-5f, std::cout); 
 	auto stop = std::chrono::system_clock::now();
 	std::chrono::duration<float> duration = stop - start;
 
