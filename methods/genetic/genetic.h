@@ -8,6 +8,7 @@
 #include <vector>
 #include <random>
 #include <set>
+#include <unordered_set>
 #include <algorithm>
 #include <array>
 
@@ -65,7 +66,7 @@ public:
 
 		auto cmp = [&f] (const XType& x1, const XType& x2) { return f(x1) < f(x2); };
 
-		std::set<XType> population;		
+		std::unordered_set<XType> population;		
 		for (const XType& x: ini) {
 			population.insert(x);
 		};
