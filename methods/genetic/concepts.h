@@ -6,10 +6,15 @@ namespace opt {
 
 template <typename FMutation, typename XType, typename RNG>
 concept bool MutationFunction = 
-   UniformRandomBitGenerator<RNG>
-   &&
+   UniformRandomBitGenerator<RNG> &&
    requires(FMutation f, const XType& a, XType b, RNG& rng) {
 	b = f(a, rng);
    };
 
+template <typename FCrossover, typename XType, typename RNG>
+concept bool CrossoverFunction = 
+   UniformRandomBitGenerator<RNG> &&
+   requires(FCrossover f, const XType& a1, const XType& a2, XType b, RNG& rng) {
+	b = f(a1, a2, rng);
+   };
 } // namespace opt

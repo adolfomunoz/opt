@@ -1,4 +1,5 @@
 #include "../../opt.h"
+#include "../../utils/null-ostream.h"
 #include <iostream>
 #include <cstring>
 #include <chrono>
@@ -10,7 +11,7 @@ int main(int argc, char** argv) {
 		if (strcmp("-sqrt-of", argv[i])==0) sqrt_of = atof(argv[++i]);
 	}
 	
-	opt::GeneticBest method(10000, 10, 1000, 10, 1000);
+	opt::GeneticBest method(10000, 10, 100, 10, 100);
 
 	null_ostream os;
 	//We try to find the square root of a number based on its square.

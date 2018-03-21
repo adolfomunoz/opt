@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../utils/null-ostream.h"
 #include "concepts.h"
 #include <iostream>
 #include <iomanip>
@@ -57,15 +56,15 @@ public:
 	 **/
 	template<typename XCollection, typename FTarget, typename FMutation, typename FCrossover, typename YType, typename OS, 
 			typename XType = typename XCollection::value_type>
-	requires MutationFunction<FMutation, XType, std::mt19937>
+	requires Container<XCollection> &&
+	         MutationFunction<FMutation, XType, std::mt19937> &&
+	         CrossoverFunction<FCrossover, XType, std::mt19937>
 	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, const YType& threshold, OS& os) const {
 		std::mt19937 random(seed_);
-		std::uniform_int_distribution<int> sample_mutation(0, best_for_mutation_ - 1);
-		std::uniform_int_distribution<int> sample_crossover(0, best_for_crossover_ - 1);
 
 		auto cmp = [&f] (const XType& x1, const XType& x2) { YType fx1 = f(x1); YType fx2 = f(x2); return std::isnan(fx1)?false:(std::isnan(fx2)?true:(f(x1) < f(x2))); };
 
-		std::unordered_set<XType> population;		
+		std::unordered_set<XType> population; 		
 		for (const XType& x: ini) {
 			population.insert(x);
 		};
@@ -94,6 +93,7 @@ public:
 			population.clear();
 			
 			for (unsigned int m = 0; m<nmutations_; ++m) {
+				std::uniform_int_distribution<int> sample_mutation(0, vbest.size()-1);
 				int chosen = sample_mutation(random);
 				XType mutation = mutate(vbest[chosen], random);
 //				os<<"Mutating: "<<vbest[chosen]<<" -> "<<mutation<<std::endl;
@@ -120,6 +120,7 @@ public:
 			population.clear();
 			
 			for (unsigned int c = 0; c<ncrossovers_; ++c) {
+				std::uniform_int_distribution<int> sample_crossover(0, vbest.size()-1);
 				int chosen1 = sample_crossover(random);
 				int chosen2 = sample_crossover(random);
 				if (chosen1 != chosen2) {
