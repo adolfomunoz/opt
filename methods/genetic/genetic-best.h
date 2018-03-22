@@ -57,6 +57,7 @@ public:
 	template<typename XCollection, typename FTarget, typename FMutation, typename FCrossover, typename YType, typename OS, 
 			typename XType = typename XCollection::value_type>
 	requires Container<XCollection> &&
+	         TargetFunction<FTarget, XType, YType> &&
 	         MutationFunction<FMutation, XType, std::mt19937> &&
 	         CrossoverFunction<FCrossover, XType, std::mt19937>
 	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, const YType& threshold, OS& os) const {

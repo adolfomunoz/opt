@@ -5,12 +5,12 @@
 #include "../../utils/concepts.h"
 
 namespace opt {
-
+namespace mutation {
 template<typename FMutation>
-class mutationvector_single {
+class vector_single {
 	FMutation mutate_element;
 public:
-	mutationvector_single(const FMutation& mutate_element) :
+	vector_single(const FMutation& mutate_element) :
 		mutate_element(mutate_element) { }
 		
 	template<typename C, typename RNG>
@@ -20,14 +20,35 @@ public:
 	C operator()(const C& c, RNG& random) const {
 		C sol = c;
 		std::uniform_int_distribution<int> sample(0,c.size()-1);
-		typename C::size_type chosen = sample(random);
+		int chosen = sample(random);
 		sol[chosen] = mutate_element(c[chosen], random);
 		return sol;
 	}
 
 };
 
-class crossovervector_onepoint {
+template<typename FMutation>
+class vector_all {
+	FMutation mutate_element;
+public:
+	vector_all(const FMutation& mutate_element) :
+		mutate_element(mutate_element) { }
+		
+	template<typename C, typename RNG>
+	requires UniformRandomBitGenerator<RNG> &&
+			 RandomAccessContainer<C> &&
+			 MutationFunction<FMutation, typename C::value_type, RNG>
+	C operator()(const C& c, RNG& random) const {
+		C sol = c;
+		for (int i = 0; i < int(c.size()); ++i) sol[i] = mutate_element(c[i], random);
+		return sol;
+	}
+
+};
+} //namespace mutation
+
+namespace crossover {
+class vector_onepoint {
 public:
 	template<typename C, typename RNG>
 	requires UniformRandomBitGenerator<RNG> && 
@@ -40,5 +61,6 @@ public:
 		return sol;
 	}
 };
+} //namespace crossover
 
 } // namespace opt

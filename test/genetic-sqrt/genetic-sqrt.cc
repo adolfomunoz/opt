@@ -20,8 +20,8 @@ int main(int argc, char** argv) {
 	auto start = std::chrono::system_clock::now();
 	float sol = method.minimize(std::array<float,1>{{0.0f}},
 			[=] (float x) { return (sqrt_of - x*x)*(sqrt_of - x*x); }, 
-			opt::mutation_repeat(opt::mutation32bit_swap(),5),
-			opt::crossover32bit_onepoint(),
+			opt::mutation::repeat(opt::mutation::bit32_swap(),5),
+			opt::crossover::bit32_onepoint(),
 			1.e-6f, os); 
 	auto stop = std::chrono::system_clock::now();
 	std::chrono::duration<float> duration = stop - start;

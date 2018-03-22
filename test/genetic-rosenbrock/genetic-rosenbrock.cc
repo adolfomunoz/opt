@@ -11,9 +11,9 @@ std::ostream& operator<<(std::ostream& os, const std::array<float,2>& a) {
 }
 
 namespace std {
-    template <> struct hash<std::array<float,2>>
+    template <size_t N> struct hash<std::array<float,N>>
     {
-        size_t operator()(const std::array<float,2>& a) const
+        size_t operator()(const std::array<float,N>& a) const
         {
 			return std::hash<float>()(a[0]+a[1]);
         }
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 	
 	testfunction::rosenbrock f(a,b);
 	
-	opt::GeneticBest method(10000, 10, 20, 10, 20);
+	opt::GeneticBest method(10000, 30, 1000, 30, 100);
 	null_ostream os;
 
 	std::array<float, 2> initial{{0.0f,0.0f}};
@@ -38,13 +38,13 @@ int main(int argc, char** argv) {
 	auto start = std::chrono::system_clock::now();
 	std::array<float, 2> sol = method.minimize(std::array<std::array<float,2>,1>{{initial}},
 			f, 
-			opt::mutationvector_single(opt::mutation_repeat(opt::mutation32bit_swap(),5)),
-			opt::crossovervector_onepoint(),
-			-1.e100, std::cout); 
+			opt::mutation::vector_all(opt::mutation::real_normal(1.0f)),
+			opt::crossover::vector_onepoint(),
+			0.0f, os); 
 	auto stop = std::chrono::system_clock::now();
 	std::chrono::duration<float> duration = stop - start;
 
 	//We start in 0
 	std::cout<<"Time = "<<duration.count()<<" sec. | Result = "
-						<<sol<<" | Error = "<< f.error(sol)<<std::endl;
+						<<sol<<" | Value at result = "<<f(sol)<<" | Error = "<< f.error(sol)<<std::endl;
 }

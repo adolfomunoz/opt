@@ -4,8 +4,9 @@
 #include "../../utils/concepts.h"
 
 namespace opt {
+namespace mutation {
 
-class mutation32bit_swap {
+class bit32_swap {
 public:
 	template<typename Bit32, typename RNG>
 	requires UniformRandomBitGenerator<RNG> && (sizeof(Bit32) == 4)
@@ -19,7 +20,22 @@ public:
 
 };
 
-class crossover32bit_onepoint {
+class bit64_swap {
+public:
+	template<typename Bit64, typename RNG>
+	requires UniformRandomBitGenerator<RNG> && (sizeof(Bit64) == 8)
+	Bit64 operator()(const Bit64& b, RNG& random) const {
+		uint64_t literal(*reinterpret_cast<const uint64_t*>(&b));
+		std::uniform_int_distribution<int> sample(0,63);
+		uint64_t solution = literal ^ (uint64_t(1) << sample(random));
+		Bit64* typed_solution = reinterpret_cast<Bit64*>(&solution);
+		return *typed_solution;
+	}
+};
+} //namespace mutation
+
+namespace crossover {
+class bit32_onepoint {
 public:
 	template<typename Bit32, typename RNG>
 	requires UniformRandomBitGenerator<RNG> && (sizeof(Bit32) == 4)
@@ -34,20 +50,8 @@ public:
 	}
 };
 
-class mutation64bit_swap {
-public:
-	template<typename Bit64, typename RNG>
-	requires UniformRandomBitGenerator<RNG> && (sizeof(Bit64) == 8)
-	Bit64 operator()(const Bit64& b, RNG& random) const {
-		uint64_t literal(*reinterpret_cast<const uint64_t*>(&b));
-		std::uniform_int_distribution<int> sample(0,63);
-		uint64_t solution = literal ^ (uint64_t(1) << sample(random));
-		Bit64* typed_solution = reinterpret_cast<Bit64*>(&solution);
-		return *typed_solution;
-	}
-};
 
-class crossover64bit_onepoint {
+class bit64_onepoint {
 public:
 	template<typename Bit64, typename RNG>
 	requires UniformRandomBitGenerator<RNG> && (sizeof(Bit64) == 8)
@@ -62,8 +66,5 @@ public:
 	}
 };
 
-
-
-
-
+} // namespace crossover
 } // namespace opt

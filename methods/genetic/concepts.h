@@ -17,4 +17,10 @@ concept bool CrossoverFunction =
    requires(FCrossover f, const XType& a1, const XType& a2, XType b, RNG& rng) {
 	b = f(a1, a2, rng);
    };
+
+template<typename FTarget, typename XType, typename YType>
+concept bool TargetFunction =
+   requires(FTarget f, const XType& x, YType y) {
+	y = f(x);
+   };
 } // namespace opt

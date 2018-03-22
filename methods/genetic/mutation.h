@@ -3,14 +3,15 @@
 #include "concepts.h"
 
 namespace opt {
+namespace mutation {
 
 //We rely on constructor template deduction (C++17)
 template<typename FMutation>
-class mutation_repeat {
+class repeat {
 	FMutation f;
 	int ntimes;
 public:
-	mutation_repeat(const FMutation& f, int ntimes) : f(f), ntimes(ntimes) { }
+	repeat(const FMutation& f, int ntimes) : f(f), ntimes(ntimes) { }
 
 	template<typename XType, typename RNG>
 	requires MutationFunction<FMutation, XType, RNG>
@@ -21,4 +22,5 @@ public:
 	}
 };
 
+} // namespace mutation
 } // namespace opt

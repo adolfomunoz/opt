@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 template <typename RNG>
 concept bool UniformRandomBitGenerator = 
     requires { typename RNG::result_type; }  && 
@@ -28,3 +30,6 @@ concept bool RandomAccessContainer =
 	    c[i];
 		i = c.size();
     };
+
+template <typename R>
+concept bool RealNumber = std::is_floating_point<R>::value;
