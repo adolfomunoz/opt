@@ -11,7 +11,8 @@ int main(int argc, char** argv) {
 		if (strcmp("-sqrt-of", argv[i])==0) sqrt_of = atof(argv[++i]);
 	}
 	
-	opt::GeneticBest method(10000, 10, 100, 10, 100);
+//	opt::GeneticBest method(10000, 10, 100, 10, 100);
+	opt::GeneticStochastic method(3, 20, 10);
 
 	null_ostream os;
 	//We try to find the square root of a number based on its square.
@@ -22,7 +23,7 @@ int main(int argc, char** argv) {
 			[=] (float x) { return (sqrt_of - x*x)*(sqrt_of - x*x); }, 
 			opt::mutation::repeat(opt::mutation::bit32_swap(),5),
 			opt::crossover::bit32_onepoint(),
-			1.e-6f, os); 
+			std::cout); 
 	auto stop = std::chrono::system_clock::now();
 	std::chrono::duration<float> duration = stop - start;
 
