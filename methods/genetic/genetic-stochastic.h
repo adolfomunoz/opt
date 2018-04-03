@@ -21,20 +21,23 @@ namespace opt {
 class GeneticStochastic
 {
 private:
-	unsigned int   iters_;			// number of iterations
-	unsigned int   nmutations_;		// number of mutations per iteration
+	unsigned int   iters_;		// number of iterations
+	unsigned int   nmutations_;	// number of mutations per iteration
 	unsigned int   ncrossovers_;    // number of crossovers per iteration
-	unsigned long  seed_;			// The seed for the random number generator (random by default)
+	float          var_;		// variance of the normal distribution (larger is better but at some point too random)
+	unsigned long  seed_;		// The seed for the random number generator (random by default)
 
 
 public:
-	GeneticStochastic(unsigned int iters 	        = 1000,
+	GeneticStochastic(unsigned int iters    = 1000,
 		unsigned int nmutations         =   10,
 		unsigned int ncrossovers        =   10,
+		float        var                =   10.0f,
 		unsigned long seed = (std::random_device())()) :
 		iters_(iters), 
 		nmutations_(nmutations),
 		ncrossovers_(ncrossovers),
+		var_(var),
 		seed_(seed) 
 	{}
 			
@@ -61,7 +64,7 @@ public:
 	         CrossoverFunction<FCrossover, XType, std::mt19937>
 	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, OS& os) const {
 		std::mt19937 random(seed_);
-		auto fprob = [f] (const XType& x) -> YType { return std::exp(-f(x)); };
+		auto fprob = [&] (const XType& x) -> YType { YType y = f(x); return std::isfinite(y)?std::exp(-y/YType(2.0f*var_)):YType(0); };
 		
 		std::vector<XType> population; 		
 		for (const XType& x: ini) {
@@ -74,12 +77,13 @@ public:
 		std::vector<YType> probability_mutated(population_mutated.size());
 
 		os <<"[0] -> ";
-		for (const XType& b : population) os << b << "   ";
+		for (const XType& b : population) os << std::scientific << std::setw(11)<< std::setprecision(2)<< b << "   ";
 		os<<std::endl;
 		
 		for (unsigned long iter = 1; iter<=iters_;++iter) {
-			std::discrete_distribution<int> index_mutation(probability.begin(), probability.end());
-
+//			std::discrete_distribution<int> index_mutation(probability.begin(), probability.end());
+			std::uniform_int_distribution<int> index_mutation(0, population.size()-1);
+			
 			population_mutated.resize(population.size()+nmutations_);
 			std::copy(population.begin(), population.end(), population_mutated.begin());
 			for (unsigned int i = 0; i<nmutations_; ++i) {
@@ -91,41 +95,39 @@ public:
 			std::copy(probability.begin(), probability.end(), probability_mutated.begin());
 			std::transform(population_mutated.begin() + population.size(),
 			               population_mutated.end(),
-						   probability_mutated.begin() + population.size(),fprob);
+				       probability_mutated.begin() + population.size(),fprob);
 			std::discrete_distribution<int> index_crossover(probability_mutated.begin(), probability_mutated.end());
 				
 			//We ensure that the best one goes on (index 0)
 			population.resize(1+ncrossovers_); population[0] = population_mutated[0];
-			YType best = probability_mutated[0];
+			probability.resize(population.size());
+			probability[0] = probability_mutated[0];
 			for (size_t i = 1; i<probability_mutated.size(); ++i) {
-				if (probability_mutated[i] > best) {
+				if (probability_mutated[i] > probability[0]) {
 					population[0] = population_mutated[i];
-					best = probability_mutated[i];
+					probability[0] = probability_mutated[i];
 				}
 			}
-			
+
 			for (unsigned int i = 0; i<ncrossovers_; ++i) {
 				population[1+i] =
 					cross(population_mutated[index_crossover(random)], 
 					      population_mutated[index_crossover(random)], 
 					      random);
 			}
+
+			std::transform(population.begin()+1,population.end(),probability.begin()+1,fprob); 
 			
-			probability.resize(population.size());
-			std::transform(population.begin(),population.end(),probability.begin(),fprob); 
 			//We ensure that the best one goes on (index 0)
-			for (size_t i = 1; i<probability_mutated.size(); ++i) {
+			for (size_t i = 1; i<probability.size(); ++i) {
 				if (probability[i] > probability[0]) {
 					std::swap(population[0], population[i]);
 					std::swap(probability[0], probability[i]);
 				}
 			}
-			
+
 			os <<"["<<iter<<"] -> ";
-			for (const XType& b : population) os << b << "   ";
-			os<<std::endl;
-			os <<"["<<iter<<"] -> ";
-			for (const YType& b : probability) os << b << "   ";
+			for (const XType& b : population) os << std::scientific << std::setw(11)<< std::setprecision(2)<< b;
 			os<<std::endl;
 
 		}

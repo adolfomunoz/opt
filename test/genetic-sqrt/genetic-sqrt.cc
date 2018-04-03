@@ -6,13 +6,17 @@
 
 int main(int argc, char** argv) {
 	float sqrt_of = 4.0;
+	unsigned int iters = 1000;
+        unsigned long seed = (std::random_device())();	
 	//double is a much bigger exploration space so it is better to move to floats
 	for (int i = 0; i<argc-1; ++i) {
-		if (strcmp("-sqrt-of", argv[i])==0) sqrt_of = atof(argv[++i]);
+		if (strcmp("-sqrt-of", argv[i])==0)         sqrt_of = atof(argv[++i]);
+		else if (strcmp("-iterations", argv[i])==0) iters = atoi(argv[++i]);
+		else if (strcmp("-seed", argv[i])==0)       seed = atol(argv[++i]);
 	}
 	
-//	opt::GeneticBest method(10000, 10, 100, 10, 100);
-	opt::GeneticStochastic method(3, 20, 10);
+//	opt::GeneticBest method(iters, 10, 100, 10, 100, seed);
+	opt::GeneticStochastic method(iters, 20, 13, 100.0f, seed);
 
 	null_ostream os;
 	//We try to find the square root of a number based on its square.
