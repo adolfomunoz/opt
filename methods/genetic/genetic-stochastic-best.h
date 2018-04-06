@@ -15,7 +15,7 @@ namespace opt {
 /**
  * Genetic algorithm
  **/
-class GeneticStochastic
+class GeneticStochasticBest
 {
 private:
 	unsigned int   iters_;		// number of iterations
@@ -30,6 +30,11 @@ private:
 		       const typename std::vector<std::tuple<XType, YType>>::const_iterator& source_end, 
 		       const typename std::vector<std::tuple<XType, YType>>::iterator& target_begin, std::mt19937& random) const
 	{
+		//First we put the best one to the first position (*target_begin).
+		auto it_to_min = std::min_element(source_begin, source_end, 
+				[] (const std::tuple<XType, YType>& a, const std::tuple<XType, YType>& b) 
+					{ return std::get<1>(a) < std::get<1>(b); });
+		*target_begin = *it_to_min;
 		//Warning, the iterator "target_begin" should have "npopulation_" elements left.
 		std::vector<YType> probability(source_end - source_begin);
 		YType furthest = std::accumulate(source_begin, source_end, YType(0), 
@@ -39,12 +44,16 @@ private:
 			[furthest] (const std::tuple<XType,YType>& e) { 
 				return std::isfinite(std::get<1>(e))?
 					(((furthest+YType(1)-std::get<1>(e)))/(furthest + YType(1))):YType(0); });
-/*		std::cerr<<"[prob] -> ";
-		std::for_each(probability.begin(), probability.end(), [] (const YType& p) { std::cerr<<p<<" | "; });
-		std::cerr<<std::endl;*/
 
-		std::discrete_distribution<int> index(probability.begin(), probability.end());
-		for (unsigned int i = 0; i < npopulation_; ++i) *(target_begin + i) = *(source_begin + index(random));
+		//We set the probability of choosing the best to 0 (we have already chosen it)
+		probability[it_to_min - source_begin]= YType(0); 
+
+		//We ensure no repetitions (but it is much slower...)
+		for (unsigned int i = 1; i < npopulation_; ++i) {
+			std::discrete_distribution<int> index(probability.begin(), probability.end());
+			*(target_begin + i) = *(source_begin + index(random));
+			probability[i] = YType(0);
+		}
 		//Some element may appear twice or even more...
 	}
 
@@ -96,7 +105,7 @@ private:
 	}
 
 public:
-	GeneticStochastic(unsigned int iters    = 1000,
+	GeneticStochasticBest(unsigned int iters    = 1000,
 		unsigned int npopulation        =   10,
 		unsigned int nmutations         =   10,
 		unsigned int ncrossovers        =   10,
@@ -153,10 +162,7 @@ public:
 			stream<XType,YType>(iter, population.begin(), population.begin() + npopulation_, os);
 		}
 
-		return std::get<0>(std::accumulate(population_next.begin() + 1, population_next.end(), population_next.front(), 
-			[] (const std::tuple<XType, YType>& a, const std::tuple<XType, YType>& b) {
-				return (std::get<1>(a) < std::get<1>(b))?a:b;
-			})); //Obtain the minimum in the big population.
+		return std::get<0>(population[0]); //Obtain the minimum in the big population (selection puts it on the first position)
 	}
 };
 

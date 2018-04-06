@@ -16,16 +16,17 @@ int main(int argc, char** argv) {
 	}
 	
 //	opt::GeneticBest method(iters, 10, 100, 10, 100, seed);
-	opt::GeneticStochastic method(iters, 20, 13, 100.0f, seed);
+//	opt::GeneticStochastic method(iters, 5, 10, 10, seed);
+	opt::GeneticStochasticBest method(iters, 5, 10, 10, seed);
 
 	null_ostream os;
 	//We try to find the square root of a number based on its square.
 	//The function to minimize is (a - x*x)^2
-
 	auto start = std::chrono::system_clock::now();
 	float sol = method.minimize(std::array<float,1>{{0.0f}},
 			[=] (float x) { return (sqrt_of - x*x)*(sqrt_of - x*x); }, 
-			opt::mutation::repeat(opt::mutation::bit32_swap(),5),
+//			opt::mutation::repeat(opt::mutation::bit32_swap(),5),
+			opt::mutation::bit32_swap(),
 			opt::crossover::bit32_onepoint(),
 			std::cout); 
 	auto stop = std::chrono::system_clock::now();

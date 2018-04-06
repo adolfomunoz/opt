@@ -22,15 +22,23 @@ namespace std {
 
 int main(int argc, char** argv) {
 	float a = 1.0; float b = 100.0;
+	unsigned int iters = 1000;
+        unsigned long seed = (std::random_device())();	
 
 	for (int i = 0; i<argc-1; ++i) {
 		if (strcmp("-a", argv[i])==0)      a = atof(argv[++i]);
 		else if (strcmp("-b", argv[i])==0) b = atof(argv[++i]);
+		else if (strcmp("-iterations", argv[i])==0) iters = atoi(argv[++i]);
+		else if (strcmp("-seed", argv[i])==0)       seed = atol(argv[++i]);
 	}
 	
 	testfunction::rosenbrock f(a,b);
 	
-	opt::GeneticBest method(10000, 30, 1000, 30, 100);
+//	opt::GeneticBest method(iters, 30, 1000, 30, 100);
+//	opt::GeneticStochastic method(iters, 10, 20, 20, seed);
+	opt::GeneticStochasticBest method(iters, 5, 20, 20, seed);
+
+
 	null_ostream os;
 
 	std::array<float, 2> initial{{0.0f,0.0f}};
@@ -40,7 +48,7 @@ int main(int argc, char** argv) {
 			f, 
 			opt::mutation::vector_all(opt::mutation::real_normal(1.0f)),
 			opt::crossover::vector_onepoint(),
-			0.0f, os); 
+			std::cout); 
 	auto stop = std::chrono::system_clock::now();
 	std::chrono::duration<float> duration = stop - start;
 
