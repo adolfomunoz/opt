@@ -76,7 +76,7 @@ private:
 	{
 		std::uniform_int_distribution<int> index(0, source_end - source_begin - 1);	
 		//Warning, the iterator "target_begin" should have "nmutations_" elements left.
-		for (unsigned int i = 0; i < nmutations_; ++i) {
+		for (unsigned int i = 0; i < ncrossovers_; ++i) {
 			XType crossed = cross(
 				std::get<0>(*(source_begin + index(random))),
 				std::get<0>(*(source_begin + index(random))),
