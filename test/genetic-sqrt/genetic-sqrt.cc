@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 	
 //	opt::GeneticBest method(iters, 10, 100, 10, 100, seed);
 //	opt::GeneticStochastic method(iters, 5, 10, 10, seed);
-	opt::GeneticStochasticBest method(iters, 5, 10, 10, seed);
+	opt::GeneticStochasticBest method(iters, 7, 12, 15, seed);
 
 	null_ostream os;
 	//We try to find the square root of a number based on its square.

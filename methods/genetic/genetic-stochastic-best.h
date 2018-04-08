@@ -45,14 +45,14 @@ private:
 				return std::isfinite(std::get<1>(e))?
 					(((furthest+YType(1)-std::get<1>(e)))/(furthest + YType(1))):YType(0); });
 
-		//We set the probability of choosing the best to 0 (we have already chosen it)
-		probability[it_to_min - source_begin]= YType(0); 
+		//We set the probability of choosing the best to 0 (we have already chosen it) unless size of probability is 1
+		if (probability.size() > 1) probability[it_to_min - source_begin]= YType(0);
 
-		//We ensure no repetitions (but it is much slower...)
+		//We ensure no repetitions (unless we must because the input population is smaller) but it is much slower...
 		for (unsigned int i = 1; i < npopulation_; ++i) {
 			std::discrete_distribution<int> index(probability.begin(), probability.end());
 			*(target_begin + i) = *(source_begin + index(random));
-			probability[i] = YType(0);
+			if (probability.size() > npopulation_) probability[i] = YType(0);
 		}
 		//Some element may appear twice or even more...
 	}
@@ -85,13 +85,13 @@ private:
 	{
 		std::uniform_int_distribution<int> index(0, source_end - source_begin - 1);	
 		//Warning, the iterator "target_begin" should have "nmutations_" elements left.
-		for (unsigned int i = 0; i < nmutations_; ++i) {
+		for (unsigned int i = 0; i < ncrossovers_; ++i) {
 			XType crossed = cross(
 				std::get<0>(*(source_begin + index(random))),
 				std::get<0>(*(source_begin + index(random))),
 					random);
 			*(target_begin + i) = std::tuple(crossed, f(crossed));
-		}
+				}
 	}
 
 	template<typename XType, typename YType, typename OS> 
