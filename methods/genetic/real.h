@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <limits>
 #include "concepts.h"
 #include "../../utils/concepts.h"
 
@@ -43,5 +44,15 @@ public:
 };
 
 } //namespace mutation
+
+namespace initialization {
+
+template<typename R, typename RNG>
+requires RealNumber<R> && UniformRandomBitGenerator<RNG>
+auto real_uniform(RNG& random, R rmin = std::numeric_limits<R>::min(), R rmax = std::numeric_limits<R>::max()) {
+	return [&random, rmin, rmax] () { std::uniform_real_distribution<R> sample(rmin, rmax); return sample(random); };
+}
+
+} //namespace initialization
 
 } // namespace opt

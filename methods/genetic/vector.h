@@ -1,6 +1,8 @@
 #pragma once
 
 #include <random>
+#include <vector>
+#include <array>
 #include "concepts.h"
 #include "../../utils/concepts.h"
 
@@ -15,8 +17,8 @@ public:
 		
 	template<typename C, typename RNG>
 	requires UniformRandomBitGenerator<RNG> &&
-			 RandomAccessContainer<C> &&
-			 MutationFunction<FMutation, typename C::value_type, RNG>
+		 RandomAccessContainer<C> &&
+		 MutationFunction<FMutation, typename C::value_type, RNG>
 	C operator()(const C& c, RNG& random) const {
 		C sol = c;
 		std::uniform_int_distribution<int> sample(0,c.size()-1);
@@ -62,5 +64,20 @@ public:
 	}
 };
 } //namespace crossover
+
+namespace initialization {
+
+template<typename F>
+//We need some concept here
+auto vector(unsigned int size, const F& f) {
+	return [size, &f] () { std::vector<decltype(f())> s(size); for (unsigned int i=0; i<size; ++i) s[i]= f(); return s; };
+}
+
+template<unsigned int size, typename F>
+auto array(const F& f) {
+	return [&f] () { std::array<decltype(f()),size> s; for (unsigned int i=0; i<size; ++i) s[i]= f(); return s; };
+}
+
+} //namespace initialization
 
 } // namespace opt

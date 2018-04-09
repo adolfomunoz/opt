@@ -5,6 +5,7 @@
 #include "genetic-stochastic-best.h"
 #include "bitwise.h"
 #include "vector.h"
+#include "initialization.h"
 #include "concepts.h"
 #include "mutation.h"
 #include "real.h"
