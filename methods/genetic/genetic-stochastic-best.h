@@ -18,11 +18,11 @@ namespace opt {
 class GeneticStochasticBest
 {
 private:
-	unsigned int   iters_;		// number of iterations
-	unsigned int   npopulation_;     // population size (for selection)
-	unsigned int   nmutations_;	// number of mutations per iteration
+	unsigned int   iters_;			// number of iterations
+	unsigned int   npopulation_;    // population size (for selection)
+	unsigned int   nmutations_;		// number of mutations per iteration
 	unsigned int   ncrossovers_;    // number of crossovers per iteration
-	unsigned long  seed_;		// The seed for the random number generator (random by default)
+	unsigned long  seed_;			// The seed for the random number generator (random by default)
 
 	template<typename XType, typename YType>
 	requires RealNumber<YType>
@@ -33,7 +33,7 @@ private:
 		//First we put the best one to the first position (*target_begin).
 		auto it_to_min = std::min_element(source_begin, source_end, 
 				[] (const std::tuple<XType, YType>& a, const std::tuple<XType, YType>& b) 
-					{ return std::get<1>(a) < std::get<1>(b); });
+					{ return std::isfinite(std::get<1>(a)) && (std::get<1>(a) < std::get<1>(b)); });
 		*target_begin = *it_to_min;
 		//Warning, the iterator "target_begin" should have "npopulation_" elements left.
 		std::vector<YType> probability(source_end - source_begin);
@@ -131,15 +131,14 @@ public:
 	 * - YType can also be accumulated (added), used for random values and initialized from zero
 	 * - OS is an output stream (support for standard binary << and for binary << with XType)
 	 **/
-	template<typename XCollection, typename FTarget, typename FMutation, typename FCrossover, typename OS, 
-			typename XType = typename XCollection::value_type,
-			typename YType = decltype(std::declval<FTarget>()(std::declval<XType>()))>
+	template<typename XCollection, typename FTarget, typename FMutation, typename FCrossover, typename YType, typename OS, 
+			typename XType = typename XCollection::value_type>
 	requires RealNumber<YType> &&
 	         Container<XCollection> &&
 	         TargetFunction<FTarget, XType, YType> &&
 	         MutationFunction<FMutation, XType, std::mt19937> &&
 	         CrossoverFunction<FCrossover, XType, std::mt19937>
-	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, OS& os) const {
+	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, const YType& threshold, OS& os) const {
 		std::mt19937 random(seed_);
 		
 		std::vector<std::tuple<XType,YType>> initial_population; //tuple contains both and xvalue and its fitness
@@ -152,7 +151,7 @@ public:
 
 		stream<XType,YType>(0, population.begin(), population.begin() + npopulation_, os);
 		
-		for (unsigned long iter = 1; iter<=iters_;++iter) {
+		for (unsigned long iter = 1; (iter<=iters_) && (std::get<1>(population[0])>threshold);++iter) {
 			crossover<XType,YType>(population.begin(), population.begin() + npopulation_, 
 					population.begin() + npopulation_, f, cross, random);
 			mutation<XType,YType>(population.begin(), population.begin() + npopulation_, 

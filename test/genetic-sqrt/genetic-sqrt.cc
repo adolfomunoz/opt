@@ -14,6 +14,7 @@ void test_method(const char* name, float sqrt_of, const Method& method) {
 //			opt::mutation::repeat(opt::mutation::bit32_swap(),5),
 			opt::mutation::bit32_swap(),
 			opt::crossover::bit32_onepoint(),
+			1.e-10f,
 			os); 
 	auto stop = std::chrono::system_clock::now();
 	std::chrono::duration<float> duration = stop - start;
@@ -23,11 +24,11 @@ void test_method(const char* name, float sqrt_of, const Method& method) {
 int main(int argc, char** argv) {
 	float sqrt_of = 4.0;
 	unsigned int iters = 1000;
-        unsigned long seed = (std::random_device())();	
+    unsigned long seed = (std::random_device())();	
 	unsigned int population = 50;
 	unsigned int mutations  = 50;
 	unsigned int crossovers = 50;
-	//double is a much bigger exploration space so it is better to move to floats
+	
 	for (int i = 0; i<argc-1; ++i) {
 		if (strcmp("-sqrt-of", argv[i])==0)         sqrt_of = atof(argv[++i]);
 		else if (strcmp("-iterations", argv[i])==0) iters = atoi(argv[++i]);
@@ -36,8 +37,8 @@ int main(int argc, char** argv) {
 		else if (strcmp("-mutations", argv[i])==0)  mutations = atoi(argv[++i]);
 		else if (strcmp("-crossovers", argv[i])==0) crossovers = atoi(argv[++i]);
 	}
-	
+
+	test_method("Best", sqrt_of, opt::GeneticBest(iters, population, mutations, population, crossovers, seed));
 	test_method("Stochastic", sqrt_of, opt::GeneticStochastic(iters, population, mutations, crossovers, seed));
 	test_method("StochasticBest", sqrt_of, opt::GeneticStochasticBest(iters, population, mutations, crossovers, seed));
-//	opt::GeneticBest method(iters, population, mutations, population, crossovers, seed);
 }
