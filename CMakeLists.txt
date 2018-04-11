@@ -56,11 +56,12 @@ include_directories(${opt_SOURCE_DIR})
 ##########################################################################################
 function(add_subdirectories_and_compile directory)
 	file(GLOB children ${directory}/*)
+	get_filename_component(dir ${directory} NAME)
 	foreach(fullchild ${children})
 		get_filename_component(child ${fullchild} NAME)
 		if(IS_DIRECTORY ${fullchild})
 			if (EXISTS ${fullchild}/${child}.cc)
-				add_executable(${directory}-${child} ${fullchild}/${child}.cc)
+				add_executable(${dir}-${child} ${fullchild}/${child}.cc)
 			else()
 				add_subdirectory(${fullchild})
 			endif()
@@ -72,7 +73,7 @@ endfunction(add_subdirectories_and_compile)
 # TARGETS
 #############################################################################################
 
-add_subdirectories_and_compile(test)
+add_subdirectories_and_compile(main/test)
 
 
 
