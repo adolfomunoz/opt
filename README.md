@@ -31,7 +31,7 @@ This downloads (or updates) all the required dependencies into de `external` sub
 
 This library tries to minimize any function you want through the `minimize` command. 
 
-It can be applied to standard C++ functions:
+It can be applied to standard C++ functions (obtaining the square root of 121 through least squares):
 ```
 float error_sqr11(float x) { return (121.0f - x*x)*(121.0f - x*x); }
 int main(int argc, char** argv) {
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 }
 ```
 
-It can also be applied to callable objects:
+It can also be applied to callable objects (square root of 121 again):
 ```
 class CallableSqrError {
 	float t;
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
 ```
 
-Last, it becomes rather useful when applied to lambda functions:
+Last, it becomes rather useful when applied to lambda functions (square root of 121 again):
 ```
 int main(int argc, char** argv) {
 	std::cout<<opt::minimize([=] (float x) { return (121.0f - x*x)*(121.0f - x*x); })<<std::endl;
