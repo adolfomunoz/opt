@@ -9,4 +9,12 @@
 #include "concepts.h"
 #include "mutation.h"
 #include "real.h"
+#include "minimize.h"
 
+namespace opt {
+
+GeneticStochasticBest genetic(unsigned int iterations = 1000, unsigned int population = 10, unsigned int mutations = 10, unsigned int crossovers = 10, unsigned long seed =  (std::random_device())()) {
+	return GeneticStochasticBest(iterations, population, mutations, crossovers, seed);
+}
+
+}; // namespace opt

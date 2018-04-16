@@ -1,6 +1,10 @@
 #pragma once
 
+#include <array>
+#include <iostream>
+#include <functional>
 #include "../../utils/concepts.h"
+#include "bitwise.h"
 
 namespace opt {
 
@@ -23,4 +27,10 @@ concept bool TargetFunction =
    requires(FTarget f, const XType& x, YType y) {
 	y = f(x);
    };
+
+template<typename Method>
+concept bool GeneticMethod =
+    requires(const Method& m, std::function<float(float)> target, const std::array<float,1>& init, float sol) {
+	sol = m.minimize(init, target, mutation::bit32_swap(), crossover::bit32_onepoint(), 0.0f, std::cout); 
+    };
 } // namespace opt
