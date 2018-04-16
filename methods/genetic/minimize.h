@@ -4,8 +4,10 @@
 #include "concepts.h"
 #include "bitwise.h"
 #include "vector.h"
-#include "../../utils/traits.h"
+#include "initialization.h"
+#include <callable/callable.hpp>
 #include "../../utils/null-ostream.h"
+#include "../../utils/concepts.h"
 
 namespace opt {
 
@@ -31,6 +33,14 @@ struct mutation_default<X> {
 };
 
 template<typename X>
+requires RealNumber<X> 
+struct init_default<X> {
+	template<typename RNG>
+	requires UniformRandomBitGenerator<RNG>
+	static auto strategy(RNG& random) { return initialization::real_uniform<float>(random); }
+};
+
+template<typename X>
 requires (sizeof(X) == 4)
 struct crossover_default<X> {
 	static constexpr auto strategy = crossover::bit32_onepoint();
@@ -40,6 +50,20 @@ template<typename X>
 requires (sizeof(X) == 8)
 struct crossover_default<X> {
 	static constexpr auto strategy = crossover::bit64_onepoint();
+};
+
+template<typename X>
+struct init_default<std::vector<X>> {
+	template<typename RNG>
+	requires UniformRandomBitGenerator<RNG>
+	static auto strategy(RNG& random) { return initialization::vector(1,init_default<X>::strategy(random)); }
+};
+
+template<typename X, unsigned int N>
+struct init_default<std::array<X,N>> {
+	template<typename RNG>
+	requires UniformRandomBitGenerator<RNG>
+	static auto strategy(RNG& random) { return initialization::vector(init_default<X>::strategy(random)); }
 };
 
 template<typename C>
@@ -54,12 +78,15 @@ struct crossover_default<C> {
 	static constexpr auto strategy = crossover::vector_onepoint();
 };
 
-template<typename Method, typename F, typename XType = first_argument_t<F>, typename YType = decltype(std::declval<F>()(std::declval<XType>()))>
+template<typename Method, typename F, 
+	typename XType = typename callable_traits<F>::template argument_type<0>, 
+	typename YType = decltype(std::declval<F>()(std::declval<XType>()))>
 requires GeneticMethod<Method> &&
-         TargetFunction<F,XType,YType>
+         TargetFunction<F,XType,YType> 
 XType minimize(const F& f, const Method& method) {
 	null_ostream os;
-	return method.minimize(std::array<XType,1>{{XType(0)}}, f, mutation_default<XType>::strategy, crossover_default<XType>::strategy, YType(0), os);
+	std::mt19937 random;
+	return method.minimize(initialization::population(100,init_default<XType>::strategy(random)), f, mutation_default<XType>::strategy, crossover_default<XType>::strategy, YType(1.e-6), os);
 }
 
 

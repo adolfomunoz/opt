@@ -13,7 +13,7 @@
 
 namespace opt {
 
-GeneticStochasticBest genetic(unsigned int iterations = 1000, unsigned int population = 10, unsigned int mutations = 10, unsigned int crossovers = 10, unsigned long seed =  (std::random_device())()) {
+GeneticStochasticBest genetic(unsigned int iterations = 10000, unsigned int population = 20, unsigned int mutations = 20, unsigned int crossovers = 40, unsigned long seed =  (std::random_device())()) {
 	return GeneticStochasticBest(iterations, population, mutations, crossovers, seed);
 }
 

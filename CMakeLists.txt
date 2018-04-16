@@ -38,6 +38,23 @@ elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 endif()
 
 ##################################################################################
+# EXTERNAL LIBRARIES
+##################################################################################
+
+include(ExternalProject)
+set(EXTERNAL_INSTALL_LOCATION ${opt_SOURCE_DIR}/external)
+# callable_traits (useful for parameter-type deduction for general stuff)
+
+ExternalProject_Add(callable
+  GIT_REPOSITORY https://github.com/sth/callable.hpp.git 
+  SOURCE_DIR ${EXTERNAL_INSTALL_LOCATION}/callable
+  #  PREFIX ${EXTERNAL_INSTALL_LOCATION}/.prefix
+  BUILD_COMMAND ""
+  CONFIGURE_COMMAND ""
+  INSTALL_COMMAND ""
+)
+
+##################################################################################
 # PATHS
 ##################################################################################
 
@@ -50,6 +67,8 @@ set(EXECUTABLE_OUTPUT_PATH "${opt_SOURCE_DIR}/bin")
 # Base include directory
 include_directories(${opt_SOURCE_DIR})
 
+# External include directory
+include_directories(${opt_SOURCE_DIR}/external)
 
 ##########################################################################################
 # USEFUL FUNCTIONS
