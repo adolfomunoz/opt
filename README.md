@@ -69,7 +69,7 @@ It is a work in progress.
 
 ## Dependencies
 
-This library depends on [callable.hpp] for function traits.
+This library depends on [callable.hpp](https://github.com/sth/callable.hpp) for function traits.
 
 ## Disclaimer
 This code is released under the [GNU Public License V3 licence](http://www.gnu.org/licenses/gpl-3.0-standalone.html). In practice, if you use this code I'd like the following to happen:
