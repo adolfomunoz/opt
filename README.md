@@ -72,7 +72,7 @@ It is a work in progress.
 This library depends on [callable.hpp](https://github.com/sth/callable.hpp) for function traits.
 
 ## Disclaimer
-This code is released under the [GNU Public License V3 licence](http://www.gnu.org/licenses/gpl-3.0-standalone.html). In practice, if you use this code I'd like the following to happen:
+This code is released under the [MIT License](https://en.wikipedia.org/wiki/MIT_License). In practice, if you use this code I'd like the following to happen:
 * Let me know that you are using it.
 * Let me know how can it be improved.
 
