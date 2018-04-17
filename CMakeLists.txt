@@ -48,7 +48,6 @@ set(EXTERNAL_INSTALL_LOCATION ${opt_SOURCE_DIR}/external)
 ExternalProject_Add(callable
   GIT_REPOSITORY https://github.com/sth/callable.hpp.git 
   SOURCE_DIR ${EXTERNAL_INSTALL_LOCATION}/callable
-  #  PREFIX ${EXTERNAL_INSTALL_LOCATION}/.prefix
   BUILD_COMMAND ""
   CONFIGURE_COMMAND ""
   INSTALL_COMMAND ""
@@ -68,7 +67,7 @@ set(EXECUTABLE_OUTPUT_PATH "${opt_SOURCE_DIR}/bin")
 include_directories(${opt_SOURCE_DIR})
 
 # External include directory
-include_directories(${opt_SOURCE_DIR}/external)
+include_directories(${EXTERNAL_INSTALL_LOCATION})
 
 ##########################################################################################
 # USEFUL FUNCTIONS
@@ -81,6 +80,7 @@ function(add_subdirectories_and_compile directory)
 		if(IS_DIRECTORY ${fullchild})
 			if (EXISTS ${fullchild}/${child}.cc)
 				add_executable(${dir}-${child} ${fullchild}/${child}.cc)
+				add_dependencies(${dir}-${child} callable)
 			else()
 				add_subdirectory(${fullchild})
 			endif()

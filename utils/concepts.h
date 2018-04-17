@@ -27,8 +27,8 @@ concept bool RandomAccessContainer =
     Container<C> && 
     requires { typename C::size_type; }  && 
     requires(C c, typename C::size_type i) {
-	    c[i];
-		i = c.size();
+	c[i];
+	i = c.size();
     };
 
 template <typename R>
