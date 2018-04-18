@@ -1,54 +1,60 @@
 #pragma once
 
 #include <random>
-#include <vector>
-#include <array>
+#include <tuple>
 #include "concepts.h"
 #include "../../utils/concepts.h"
 
 namespace opt {
 namespace mutation {
-template<typename FMutation>
-class vector_single {
-	FMutation mutate_element;
+
+template<typename... FMutation>
+class tuple_single {
+	std::tuple<FMutation...> mutate_element;
+
+	template<typename RNG, typename T, std::size_t ...I>
+	T mutate_single(const T& t, RNG& random, int i, std::index_sequence<I...>) {
+		return T((i==I)?(std::get<I>(mutate_element)(std::get<I>(t), random)):(std::get<I>(t))...);
+	}
 public:
-	vector_single(const FMutation& mutate_element) :
+	tuple_single(const FMutation&... mutate_element) :
 		mutate_element(mutate_element) { }
 		
-	template<typename C, typename RNG>
-	requires UniformRandomBitGenerator<RNG> &&
-		 RandomAccessContainer<C> &&
-		 MutationFunction<FMutation, typename C::value_type, RNG>
-	C operator()(const C& c, RNG& random) const {
-		C sol = c;
-		std::uniform_int_distribution<int> sample(0,c.size()-1);
-		int chosen = sample(random);
-		sol[chosen] = mutate_element(c[chosen], random);
-		return sol;
+	template<typename RNG, typename Args...> 
+	requires UniformRandomBitGenerator<RNG> // Need to check: whether T is a tuple &&
+		 // MutationFunction<FMutation, typename C::value_type, RNG>
+	std::tuple<Args...> operator()(const std::tuple<Args...>& t, RNG& random) const {
+		std::uniform_int_distribution<int> sample(0,sizeof...(Args));
+		return mutate_single(t, sample(random), random, std::index_sequence_for<Args...>);
 	}
 
 };
 
-template<typename FMutation>
-class vector_all {
-	FMutation mutate_element;
+template<typename... FMutation>
+class tuple_all {
+	std::tuple<FMutation...> mutate_element;
+
+	template<typename RNG, typename T, std::size_t ...I>
+	T mutate_all(const T& t, RNG& random, std::index_sequence<I...>) {
+		return T(std::get<I>(mutate_element)(std::get<I>(t), random)...)
+	}
 public:
-	vector_all(const FMutation& mutate_element) :
+	tuple_all(const FMutation&... mutate_element) :
 		mutate_element(mutate_element) { }
 		
-	template<typename C, typename RNG>
-	requires UniformRandomBitGenerator<RNG> &&
-			 RandomAccessContainer<C> &&
-			 MutationFunction<FMutation, typename C::value_type, RNG>
-	C operator()(const C& c, RNG& random) const {
-		C sol = c;
-		for (int i = 0; i < int(c.size()); ++i) sol[i] = mutate_element(c[i], random);
-		return sol;
+	template<typename RNG, typename Args...> 
+	requires UniformRandomBitGenerator<RNG> // Need to check: whether T is a tuple &&
+		 // MutationFunction<FMutation, typename C::value_type, RNG>
+	std::tuple<Args...> operator()(const std::tuple<Args...>& t, RNG& random) const {
+		return mutate_single(t, random, std::index_sequence_for<Args...>);
 	}
 
 };
+
+
 } //namespace mutation
 
+/**
 namespace crossover {
 class vector_onepoint {
 public:
@@ -94,5 +100,6 @@ auto array(const F& f) {
 }
 
 } //namespace initialization
+**/
 
 } // namespace opt
