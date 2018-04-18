@@ -10,7 +10,7 @@ namespace opt {
 namespace mutation {
 
 template <typename R>
-requires RealNumber<R>
+requires std::is_floating_point_v<R>
 class real_uniform {
 	R rmin, rmax;
 public:
@@ -27,7 +27,7 @@ public:
 };
 
 template <typename R>
-requires RealNumber<R>
+requires std::is_floating_point_v<R>
 class real_normal {
 	R stddev;
 public:
@@ -48,7 +48,7 @@ public:
 namespace initialization {
 
 template<typename R, typename RNG>
-requires RealNumber<R> && UniformRandomBitGenerator<RNG>
+requires std::is_floating_point_v<R> && UniformRandomBitGenerator<RNG>
 auto real_uniform(RNG& random, R rmin = std::numeric_limits<R>::min(), R rmax = std::numeric_limits<R>::max()) {
 	return [&random, rmin, rmax] () { std::uniform_real_distribution<R> sample(rmin, rmax); return sample(random); };
 }

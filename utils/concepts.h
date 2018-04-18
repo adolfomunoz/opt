@@ -31,7 +31,4 @@ concept bool RandomAccessContainer =
 	i = c.size();
     };
 
-template <typename R>
-concept bool RealNumber = std::is_floating_point<R>::value;
-
 

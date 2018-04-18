@@ -25,7 +25,7 @@ private:
 	unsigned long  seed_;			// The seed for the random number generator (random by default)
 
 	template<typename XType, typename YType>
-	requires RealNumber<YType>
+	requires std::is_floating_point_v<YType>
 	void selection(const typename std::vector<std::tuple<XType, YType>>::const_iterator& source_begin, 
 		       const typename std::vector<std::tuple<XType, YType>>::const_iterator& source_end, 
 		       const typename std::vector<std::tuple<XType, YType>>::iterator& target_begin, std::mt19937& random) const
@@ -58,7 +58,7 @@ private:
 	}
 
 	template<typename XType, typename YType, typename FTarget, typename FMutation>
-	requires RealNumber<YType> &&
+	requires std::is_floating_point_v<YType> &&
 		 TargetFunction<FTarget, XType, YType> &&
 	         MutationFunction<FMutation, XType, std::mt19937> 
 	void mutation(const typename std::vector<std::tuple<XType, YType>>::const_iterator& source_begin, 
@@ -75,7 +75,7 @@ private:
 	}
 
 	template<typename XType, typename YType, typename FTarget, typename FCrossover>
-	requires RealNumber<YType> &&
+	requires std::is_floating_point_v<YType> &&
 		 TargetFunction<FTarget, XType, YType> &&
 	         CrossoverFunction<FCrossover, XType, std::mt19937> 
 	void crossover(const typename std::vector<std::tuple<XType, YType>>::const_iterator& source_begin, 
@@ -133,7 +133,7 @@ public:
 	 **/
 	template<typename XCollection, typename FTarget, typename FMutation, typename FCrossover, typename YType, typename OS, 
 			typename XType = typename XCollection::value_type>
-	requires RealNumber<YType> &&
+	requires std::is_floating_point_v<YType> &&
 	         Container<XCollection> &&
 	         TargetFunction<FTarget, XType, YType> &&
 	         MutationFunction<FMutation, XType, std::mt19937> &&

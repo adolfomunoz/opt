@@ -33,11 +33,19 @@ struct mutation_default<X> {
 };
 
 template<typename X>
-requires RealNumber<X> 
+requires std::is_integral_v<X> 
 struct init_default<X> {
 	template<typename RNG>
 	requires UniformRandomBitGenerator<RNG>
-	static auto strategy(RNG& random) { return initialization::real_uniform<float>(random); }
+	static auto strategy(RNG& random) { return initialization::int_uniform<X>(random); }
+};
+
+template<typename X>
+requires std::is_floating_point_v<X> 
+struct init_default<X> {
+	template<typename RNG>
+	requires UniformRandomBitGenerator<RNG>
+	static auto strategy(RNG& random) { return initialization::real_uniform<X>(random); }
 };
 
 template<typename X>
@@ -72,10 +80,27 @@ struct mutation_default<C> {
 	static constexpr auto strategy = mutation::vector_single(mutation_default<typename C::value_type>::strategy);
 };
 
+template<typename... Args>
+struct mutation_default<std::tuple<Args...>> {
+	static constexpr auto strategy = mutation::tuple_single<Args...>(mutation_default<Args>::strategy...);
+};
+
 template<typename C>
 requires RandomAccessContainer<C>
 struct crossover_default<C> {
-	static constexpr auto strategy = crossover::vector_onepoint();
+	static constexpr auto strategy = crossover::vector_uniform();
+};
+
+template<typename... Args>
+struct crossover_default<std::tuple<Args...>> {
+	static constexpr auto strategy = crossover::tuple_uniform();
+};
+
+template<typename... Args>
+struct init_default<std::tuple<Args...>> {
+	template<typename RNG>
+	requires UniformRandomBitGenerator<RNG>
+	static auto strategy(RNG& random) { return initialization::tuple(init_default<Args>::strategy(random)...); }
 };
 
 template<typename Method, typename F, 
