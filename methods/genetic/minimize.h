@@ -37,7 +37,7 @@ requires std::is_integral_v<X>
 struct init_default<X> {
 	template<typename RNG>
 	requires UniformRandomBitGenerator<RNG>
-	static auto strategy(RNG& random) { return initialization::int_uniform<X>(random); }
+	static auto strategy(RNG& random) { return initialization::int_uniform<X>(random,X(-1000),X(1000)); }
 };
 
 template<typename X>
@@ -45,7 +45,7 @@ requires std::is_floating_point_v<X>
 struct init_default<X> {
 	template<typename RNG>
 	requires UniformRandomBitGenerator<RNG>
-	static auto strategy(RNG& random) { return initialization::real_uniform<X>(random); }
+	static auto strategy(RNG& random) { return initialization::real_uniform<X>(random,X(-1000),X(1000)); }
 };
 
 template<typename X>

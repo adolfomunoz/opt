@@ -49,9 +49,10 @@ namespace initialization {
 
 template<typename R, typename RNG>
 requires std::is_floating_point_v<R> && UniformRandomBitGenerator<RNG>
-auto real_uniform(RNG& random, R rmin = std::numeric_limits<R>::min(), R rmax = std::numeric_limits<R>::max()) {
+auto real_uniform(RNG& random, R rmin = std::numeric_limits<R>::min(), R rmax = std::numeric_limits<R>::max()) { 
 	return [&random, rmin, rmax] () { std::uniform_real_distribution<R> sample(rmin, rmax); return sample(random); };
 }
+
 
 } //namespace initialization
 
