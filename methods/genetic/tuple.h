@@ -17,7 +17,7 @@ class tuple_single {
 		return T((i==I)?(std::get<I>(mutate_element)(std::get<I>(t), random)):(std::get<I>(t))...);
 	}
 public:
-	tuple_single(const FMutation&... mutate_element) :
+	constexpr tuple_single(const FMutation&... mutate_element) :
 		mutate_element(mutate_element...) { }
 		
 	template<typename RNG, typename... Args> 
@@ -40,7 +40,7 @@ class tuple_all {
 		return T(std::get<I>(mutate_element)(std::get<I>(t), random)...);
 	}
 public:
-	tuple_all(const FMutation&... mutate_element) :
+	constexpr tuple_all(const FMutation&... mutate_element) :
 		mutate_element(mutate_element...) { }
 		
 	template<typename RNG, typename... Args> 

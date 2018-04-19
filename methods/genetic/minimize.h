@@ -82,16 +82,23 @@ struct mutation_default<C> {
 
 template<typename... Args>
 struct mutation_default<std::tuple<Args...>> {
-	static constexpr auto strategy = mutation::tuple_single<Args...>(mutation_default<Args>::strategy...);
+	static constexpr auto strategy = mutation::tuple_single(mutation_default<Args>::strategy...);
 };
 
 template<typename C>
 requires RandomAccessContainer<C>
 struct crossover_default<C> {
-	static constexpr auto strategy = crossover::vector_uniform();
+	static constexpr auto strategy = crossover::vector_onepoint();
 };
 
 template<typename... Args>
+requires sizeof...(Args) < 6
+struct crossover_default<std::tuple<Args...>> {
+	static constexpr auto strategy = crossover::tuple_onepoint();
+};
+
+template<typename... Args>
+requires sizeof...(Args) >= 6
 struct crossover_default<std::tuple<Args...>> {
 	static constexpr auto strategy = crossover::tuple_uniform();
 };
@@ -104,7 +111,7 @@ struct init_default<std::tuple<Args...>> {
 };
 
 template<typename Method, typename F, 
-	typename XType = typename callable_traits<F>::template argument_type<0>, 
+	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
 	typename YType = decltype(std::declval<F>()(std::declval<XType>()))>
 requires GeneticMethod<Method> &&
          TargetFunction<F,XType,YType> 

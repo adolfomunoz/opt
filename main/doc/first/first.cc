@@ -1,5 +1,4 @@
 #include "../../../opt.h"
-#include <cstring>
 
 float error_sqr11(float x) { return (121.0f - x*x)*(121.0f - x*x); }
 

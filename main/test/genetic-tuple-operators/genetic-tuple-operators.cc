@@ -2,12 +2,22 @@
 #include <iostream>
 #include <cstring>
 
-std::ostream& operator<<(std::ostream& os, const std::tuple<float, int>& t)
+template<class Ch, class Tr, class Tuple, std::size_t... Is>
+void print_tuple_impl(std::basic_ostream<Ch,Tr>& os,
+                      const Tuple& t,
+                      std::index_sequence<Is...>)
 {
-    os << "("<<std::get<0>(t)<<","<<std::get<1>(t)<<")";
-	return os;
+    ((os << (Is == 0? "" : ", ") << std::get<Is>(t)), ...);
 }
-
+ 
+template<class Ch, class Tr, class... Args>
+auto& operator<<(std::basic_ostream<Ch, Tr>& os,
+                 const std::tuple<Args...>& t)
+{
+    os << "(";
+    print_tuple_impl(os, t, std::index_sequence_for<Args...>{});
+    return os << ")";
+}
 
 int main(int argc, char** argv) {
 	unsigned long seed = (std::random_device())();
