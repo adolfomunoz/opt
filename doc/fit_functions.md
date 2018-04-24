@@ -3,7 +3,7 @@
 This library tries to minimize any function you want through the `minimize` command. The fitting function (to minimize) can be passed as parameters in different ways.
 
 It can be applied to standard C++ functions (obtaining the square root of 121 through least squares):
-```
+```cpp
 float error_sqr11(float x) { return (121.0f - x*x)*(121.0f - x*x); }
 int main(int argc, char** argv) {
 	std::cout<<opt::minimize(error_sqr11)<<std::endl;
@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 ```
 
 It can also be applied to callable objects (square root of 121 again):
-```
+```cpp
 class CallableSqrError {
 	float t;
 public:
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 ```
 
 Last, it becomes rather useful when applied to lambda functions (square root of 121 again):
-```
+```cpp
 int main(int argc, char** argv) {
 	std::cout<<opt::minimize([=] (float x) { return (121.0f - x*x)*(121.0f - x*x); })<<std::endl;
 }

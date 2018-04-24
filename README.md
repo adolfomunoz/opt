@@ -25,22 +25,27 @@ cmake -G "Unix Makefiles" .. -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
-This downloads (or updates) all the required dependencies into de `external` subfolder and compiles all the provided examples and tests and moves the executable files to the `bin` subfolder. Other cmake generators (such as Visual Studio) have not been tested.
+This downloads (or updates) all the required dependencies into the `external` subfolder and compiles all the provided examples and tests and moves the executable files to the `bin` subfolder. Other cmake generators (such as Visual Studio) have not been tested.
 
-## Usage
+## Documentation
 
-This library tries to minimize any function you want through the `minimize` command, which can be called as follows:
+This library tries to minimize any function you want through the `minimize` command, which has the following syntax:
 
 ```
+opt::minimize(<function>, <method>, <optimization parameters>)
+```
+where
+* `<function>` represents the function to minimize.
+* `<method>` represents the method to use in the optimization.
+* `<optimization parameters>` represents the per-minimization specific parameters (which vary depending on the optimization method).
+
+
+```cpp
 int main(int argc, char** argv) {
 	std::cout<<opt::minimize([=] (float x) { return (121.0f - x*x)*(121.0f - x*x); })<<std::endl;
 }
 ```
 
-
-## Documentation
-
-It is a work in progress.
 
 ## Dependencies
 
