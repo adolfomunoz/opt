@@ -39,6 +39,7 @@ where
 * `<method>` represents the method to use in the optimization.
 * `<optimization parameters>` represents the per-minimization specific parameters (which vary depending on the optimization method).
 
+Both `<method>` and `<optimization parameters>` can be omitted, and the `minimize` function will try to deduce the best optimization method (generally, genetic algorithms) together with the most adequate parameters, according to the data types involved in the fitting function:
 
 ```cpp
 int main(int argc, char** argv) {
@@ -46,6 +47,12 @@ int main(int argc, char** argv) {
 }
 ```
 
+* Fitting functions.
+   * [Passing function parameters](doc/functions_parameters.md)
+   * Functions with multiple parameters.
+* Optimization methods.
+   * Default behavior.
+   * Genetic algorithms.
 
 ## Dependencies
 
