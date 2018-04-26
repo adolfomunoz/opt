@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 
 `opt::minimize` deduce the data types involved in a parameter function. Specifically, the return type of `opt::minimize` is the same as the parameter of the fitting function. 
 
-This cannot be done in the case of templated `operator()`:
+This cannot be done in the case of templated (or overloaded) `operator()`:
 
 ```cpp
 class Wrong {

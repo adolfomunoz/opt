@@ -8,7 +8,7 @@ class callable_tuple {
 private:
 	template<std::size_t... I>
 	static constexpr auto type_aux(std::index_sequence<I...>) {
-		return std::tuple<typename callable_traits<F>::template argument_type<I>...>();
+		return std::tuple<std::remove_cv_t<std::remove_reference_t<typename callable_traits<F>::template argument_type<I>>>...>();
 	}
 
 public:	

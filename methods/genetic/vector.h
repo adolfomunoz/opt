@@ -12,7 +12,7 @@ template<typename FMutation>
 class vector_single {
 	FMutation mutate_element;
 public:
-	vector_single(const FMutation& mutate_element) :
+	constexpr vector_single(const FMutation& mutate_element) :
 		mutate_element(mutate_element) { }
 		
 	template<typename C, typename RNG>
@@ -33,7 +33,7 @@ template<typename FMutation>
 class vector_all {
 	FMutation mutate_element;
 public:
-	vector_all(const FMutation& mutate_element) :
+	constexpr vector_all(const FMutation& mutate_element) :
 		mutate_element(mutate_element) { }
 		
 	template<typename C, typename RNG>
@@ -84,13 +84,13 @@ namespace initialization {
 
 template<typename F>
 //We need some concept here
-auto vector(unsigned int size, const F& f) {
-	return [size, &f] () { std::vector<decltype(f())> s(size); for (unsigned int i=0; i<size; ++i) s[i]= f(); return s; };
+constexpr auto vector(unsigned int size, const F& f) {
+	return [size, f] () { std::vector<decltype(f())> s(size); for (unsigned int i=0; i<size; ++i) s[i]= f(); return s; };
 }
 
 template<unsigned int size, typename F>
-auto array(const F& f) {
-	return [&f] () { std::array<decltype(f()),size> s; for (unsigned int i=0; i<size; ++i) s[i]= f(); return s; };
+constexpr auto array(const F& f) {
+	return [f] () { std::array<decltype(f()),size> s; for (unsigned int i=0; i<size; ++i) s[i]= f(); return s; };
 }
 
 } //namespace initialization
