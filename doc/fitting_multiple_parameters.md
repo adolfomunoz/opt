@@ -23,7 +23,9 @@ int main(int argc, char** argv) {
 			{  if( (n[0] <= d) || (n[1] <= d) || (d <= 1)) return 1.e6f;
 			   else if ( ((n[0]%n[1])==0) || ((n[1]%n[0])==0) ) return 1.e3f;
 			   else return float(n[0]%d) + float(n[1]%d); });
-	std::cout<<undivisible[0]<<" and "<<undivisible[1]<<" are not divisible between each other but are divisible by "<<divisible<<std::endl;	
+	std::cout<<undivisible[0]<<" and "<<undivisible[1]<<
+                 " are not divisible between each other but are divisible by "<<
+                 divisible<<std::endl;	
 }
 ```
 
