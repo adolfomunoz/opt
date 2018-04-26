@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 
 This cannot be done in the case of templated `operator()`:
 
-```
+```cpp
 class Wrong {
 public:
     template<typename T>
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 
 Also, this affects polymorphic lambdas:
 
-```
+```cpp
 int main(int argc, char** argv) {
         //Cannnot deduce data type
 	std::cout<<opt::minimize([] (const auto& t) { return ...; })<<std::endl;

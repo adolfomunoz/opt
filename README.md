@@ -1,11 +1,11 @@
 # opt
-A library for optimization methods written in C++17 with concepts.
+Alibrary for optimization methods written in C++17 with concepts.
 
 This library provides a set of numerical optimization routines (for now, just genetic algorithms). Thanks to [C++ concepts](http://en.cppreference.com/w/cpp/language/constraints) each routine is able to select adequate strategies and optimization methods according to the involved data types and the provided information. 
 
 ## Installation
 
-This library is **header-only** (except for the different examples). To obtain it you can use the command line:
+This library is **header-only** (except for the examples). To obtain it you can use the command line:
 ```
 git clone https://github.com/adolfomunoz/opt.git
 ```
@@ -48,8 +48,8 @@ int main(int argc, char** argv) {
 ```
 
 * Fitting functions.
-   * [Passing function parameters](doc/functions_parameters.md)
-   * Functions with multiple parameters.
+   * [Passing function parameters](doc/function_parameters.md)
+   * [Fitting functions with multiple parameters.](doc/fitting_multiple_parameters.md)
 * Optimization methods.
    * Default behavior.
    * Genetic algorithms.

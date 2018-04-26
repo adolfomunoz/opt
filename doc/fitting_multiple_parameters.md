@@ -1,6 +1,8 @@
-#include "../../../opt.h"
-#include <cmath>
+# Fitting functions with multiple parameters
 
+Fitting functions can have múltiple parameters. `opt::minimize` will return the minima through a `std::tuple`, deducing the corresponding types:
+
+```cpp
 int main(int argc, char** argv) {
 	float minx, miny;
 	//Ackley function (minima in 0,0)
@@ -10,3 +12,10 @@ int main(int argc, char** argv) {
 			  std::exp(1.0f) + 20.0f; });
 	std::cout<<"Minima are "<<minx<<" and "<<miny<<std::endl;
 }
+```
+
+Again, this deduction cannot happen with polymorphic functions.
+
+
+
+
