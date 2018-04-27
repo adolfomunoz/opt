@@ -21,10 +21,10 @@ class PolynomialCompare {
 	F f; float xmin; float xmax; unsigned int nsamples;
 	std::mt19937 random;
 public:
-	CompareToPolynomial(const F& f, float xmin = 0.0f, float xmax = 1.0f, unsigned int nsamples = 100, unsigned long seed = (std::random_device())()) :
+	PolynomialCompare(const F& f, float xmin = 0.0f, float xmax = 1.0f, unsigned int nsamples = 100, unsigned long seed = (std::random_device())()) :
 		f(f), xmin(xmin), xmax(xmax), nsamples(nsamples), random(seed) { }
 
-	float operator(const std::vector<float>& p) {
+	float operator()(const std::vector<float>& p) const {
 		float sum = 0.0f;
 		std::uniform_real_distribution sample(xmin, xmax);
 		for (unsigned int i = 0; i<nsamples; ++i) {
@@ -34,25 +34,21 @@ public:
 		}
 		return sum/float(nsamples);
 	}
-
 };
  
 int main(int argc, char** argv) {
-	float minx, miny;
-	//Ackley function (minima in 0,0)
-	std::tie(minx,miny) = opt::minimize([] (float x, float y) 
-		{ return -20.0f*std::exp(-0.2f*std::sqrt(0.5f*(x*x + y*y))) - 
-		          std::exp(0.5f*(std::cos(2*M_PI*x) + std::cos(2*M_PI*y))) +
-			  std::exp(1.0f) + 20.0f; });
-	std::cout<<"Minima are "<<minx<<" and "<<miny<<std::endl;
+	std::vector<float> polynomial;
 
-	//With integers and arrays
-	//Obtain two positive numbers which are not divisible between each other but are divisible by the same number
-	std::array<int, 2> undivisible; int divisible;
+	polynomial = opt::minimize(PolynomialCompare([] (float x) { return 2.0f*x + 1.0f; }), opt::genetic(), 
+			[] (const std::vector<float>& p, auto& random) { 
+				std::vector<float> sol = p;
+				std::discrete_distribution<int> sample({0.2, 0.8});
+				switch(sample(random)) {
+					case 0:  sol.push_back(1.0f);
+					default: return  opt::mutation::vector_single(opt::mutation::real_normal(1.0f))(sol, random);
+				}
+			});
 
-	std::tie(undivisible, divisible) = opt::minimize([] (const std::array<int, 2>& n, int d)
-			{  if( (n[0] <= d) || (n[1] <= d) || (d <= 1)) return 1.e6f;
-			   else if ( ((n[0]%n[1])==0) || ((n[1]%n[0])==0) ) return 1.e3f;
-			   else return float(n[0]%d) + float(n[1]%d); });
-	std::cout<<undivisible[0]<<" and "<<undivisible[1]<<" are not divisible between each other but are divisible by "<<divisible<<std::endl;	
+	for (float coef : polynomial) std::cout<<coef<<" ";
+	std::cout<<std::endl;
 }

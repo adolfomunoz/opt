@@ -125,9 +125,23 @@ struct init_default<std::tuple<Args...>> {
 
 
 
+
 /*************************************
  * Default calls strategies *
  *************************************/
+template<typename Method, typename F, 
+	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
+	typename YType = decltype(std::declval<F>()(std::declval<XType>())),
+	typename FMutation>
+requires GeneticMethod<Method> &&
+         TargetFunction<F,XType,YType> &&
+	 MutationFunction<FMutation, XType, std::mt19937>
+XType minimize(const F& f, const Method& method, const FMutation& mutation_strategy) {
+	null_ostream os;
+	std::mt19937 random;
+	return method.minimize(initialization::population(100,init_default<XType>::strategy(random)), f, mutation_strategy, crossover_default<XType>::strategy, YType(1.e-6), os);
+}
+
 
 template<typename Method, typename F, 
 	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
