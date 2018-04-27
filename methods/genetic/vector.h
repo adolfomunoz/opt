@@ -57,9 +57,11 @@ public:
 			 RandomAccessContainer<C>
 	C operator()(const C& c1, const C& c2, RNG& random) const {
 		C sol = c2;
-		std::uniform_int_distribution<int> sample(1,c1.size()-1);
-		int chosen = sample(random);
-		for (int i=0 ; i<chosen;++i) sol[i] = c1[i];
+		if ((c1.size()>1) && ((c2.size())>1)) {
+			std::uniform_int_distribution<int> sample(1,std::min(c1.size(),c2.size())-1);
+			int chosen = sample(random);
+			for (int i=0 ; i<chosen;++i) sol[i] = c1[i];
+		}
 		return sol;
 	}
 };
