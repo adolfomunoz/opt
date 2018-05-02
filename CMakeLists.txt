@@ -40,6 +40,14 @@ endif()
 ##################################################################################
 # EXTERNAL LIBRARIES
 ##################################################################################
+option(BUILD_OFFLINE "Build offline" OFF)
+
+# If offline you can set -DBUILD_OFFLINE=ON so it does not try to update stuff
+if (${BUILD_OFFLINE})
+    set_property(DIRECTORY ${opt_SOURCE_DIR}
+                 PROPERTY EP_UPDATE_DISCONNECTED 1)
+endif()
+
 
 include(ExternalProject)
 set(EXTERNAL_INSTALL_LOCATION ${opt_SOURCE_DIR}/external)
