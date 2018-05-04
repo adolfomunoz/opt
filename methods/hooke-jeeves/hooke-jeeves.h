@@ -25,14 +25,13 @@ public:
 		float epsilon                 = 1.e-3f) :
 		iters_(iters), 
 		step_size_(step_size),
-		epsilon_(epsilon)
-	{}
+		epsilon_(epsilon) {}
 			
 	template<typename XType, typename FTarget, typename OS,
 			typename YType = decltype(std::declval<FTarget>()(std::declval<XType>()))>
-    requires std::is_floating_point_v<YType> &&
-	         Container<XType> &&
-	         TargetFunction<FTarget, XType, YType> 
+    		requires std::is_floating_point_v<YType> &&
+	                 Container<XType> &&
+	                 TargetFunction<FTarget, XType, YType> 
 	XType minimize(const XType& ini, const FTarget& f, OS& os) const {
 		XType best   = ini;
 		YType f_best = f(best);
