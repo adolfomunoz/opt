@@ -31,4 +31,13 @@ concept bool RandomAccessContainer =
 	i = c.size();
     };
 
+template <typename T>
+concept bool Tuple =
+   requires (T t) {
+      std::get<0>(t);
+   } && 
+   requires (T t1, T t2) {
+      std::tuple_cat(t1,t2);
+   };
+
 

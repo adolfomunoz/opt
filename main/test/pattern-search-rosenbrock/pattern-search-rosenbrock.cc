@@ -42,5 +42,5 @@ int main(int argc, char** argv) {
 	
 	testfunction::rosenbrock f(a,b);
 	
-	test_method("HookeJeeves", f, opt::HookeJeeves(iters, step, epsilon));
+	test_method("PatternSearch", f, opt::pattern_search(iters, step, epsilon));
 }

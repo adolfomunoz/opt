@@ -84,5 +84,5 @@ int main(int argc, char** argv) {
 	test_method("Best", f, opt::GeneticBest(iters, population, mutations, population, crossovers, seed));
 	test_method("Stochastic", f, opt::GeneticStochastic(iters, population, mutations, crossovers, seed));
 	test_method("StochasticBest", f, opt::GeneticStochasticBest(iters, population, mutations, crossovers, seed));
-	test_method("HookeJeeves", f, opt::HookeJeeves(iters, step, epsilon));
+	test_method("PatternSearch", f, opt::PatternSearch(iters, step, epsilon));
 }

@@ -51,8 +51,8 @@ int main(int argc, char** argv) {
    * [Passing function parameters](doc/function_parameters.md)
    * [Fitting functions with multiple parameters.](doc/fitting_multiple_parameters.md)
 * Optimization methods.
-   * Default behavior.
-   * Genetic algorithms.
+   * Genetic algorithms. (default)
+   * [Pattern search.](doc/pattern_search.md)
 
 ## Dependencies
 

@@ -8,10 +8,7 @@
 namespace opt {
 
 
-/**
- * Genetic algorithm
- **/
-class HookeJeeves
+class PatternSearch
 {
 private:
 	unsigned int   iters_;			// number of iterations
@@ -20,7 +17,7 @@ private:
 			
 
 public:
-	HookeJeeves(unsigned int iters    = 1000,
+	PatternSearch(unsigned int iters    = 1000,
 		float step_size               = 1.0f,
 		float epsilon                 = 1.e-3f) :
 		iters_(iters), 
@@ -75,8 +72,14 @@ public:
 
 		return best;
 	}
-
 };
+
+PatternSearch pattern_search(unsigned int iters = 1000, float step_size = 1.0f, float epsilon = 1.e-6f) {
+	return PatternSearch(iters, step_size, epsilon);
+}
 
 
 } // namespace opt
+
+
+#include "minimize.h"
