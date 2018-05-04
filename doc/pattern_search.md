@@ -48,8 +48,8 @@ constexpr real sqr(real r) { return r*r; }
 int main(int argc, char** argv) {
 	double xmin, ymin;	
 	std::tie(xmin, ymin) = opt::minimize(
-             [] (double x, double y) { return sqr(1.5-x+x*y) + sqr(2.25-x+x*y*y) + sqr(2.625-x+x*y*y*y);},
-             opt::pattern_search(1000, 1.0, 1.e-8)
+            [] (double x, double y) { return sqr(1.5-x+x*y) + sqr(2.25-x+x*y*y) + sqr(2.625-x+x*y*y*y);},
+            opt::pattern_search(1000, 1.0, 1.e-8)
         );
 	std::cout<<"("<<xmin<<","<<ymin<<")"<<" should be (3,0.5)"<<std::endl;
 }
