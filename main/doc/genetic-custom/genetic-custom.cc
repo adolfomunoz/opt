@@ -6,25 +6,25 @@
 class Ponger {
 	int value_;
 public:
-	Ponger(int value = 0) : value_(value) { }
-	void ping() { ++value_; }
-	void pong() { --value_; }
+	Ponger(int value = 1) : value_(value) { }
+	void ping() { ++value_; if (value_ == 0) ++value_; }
+	void pong() { --value_; if (value_ == 0) --value_; }
 	int value() const { return value_; }
 };
 
-template<typename RNG>
-Ponger mutpon(const Ponger& p, RNG& random) {
-	std::uniform_int_distribution<int> choice(0,1);
-	Ponger s = p;
-	switch (choice(random)) {
-		case 0: s.ping(); break;
-		case 1: s.pong(); break;
-	}
-	return s;
-}
- 
 int main(int argc, char** argv) {
 	Ponger p1, p2, p3;
+
+	//Lambda function for mutating Pongers
+	auto mutpon = [] (const Ponger& p, auto& random) {
+		std::uniform_int_distribution<int> choice(0,1);
+		Ponger s = p;
+		switch (choice(random)) {
+			case 0: s.ping(); break;
+			case 1: s.pong(); break;
+		}
+		return s;
+	};
 	
 	std::tie(p1, p2, p3) = opt::minimize(
 		// Function to minimize with 3 pongers (will return a tuple)
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 		opt::genetic(100,10,10,5),
 		// Each mutation: mutate one ponger, either ping or pong.
 		// The same mutation strategy for the three function parameters
-		opt::mutation::tuple_single(mutpon, mutpon, mutpon)
+		opt::mutation::single_parameter(mutpon, mutpon, mutpon)
 	);
 	
 	std::cout<<p1.value()<<" - "<<p2.value()<<" - "<<p3.value()<<std::endl;
