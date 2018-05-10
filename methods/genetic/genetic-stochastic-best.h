@@ -136,7 +136,7 @@ public:
 	requires std::is_floating_point_v<YType> &&
 	         Container<XCollection> &&
 	         TargetFunction<FTarget, XType, YType> &&
-	         MutationFunction<FMutation, XType, std::mt19937> &&
+	//         MutationFunction<FMutation, XType, std::mt19937> &&
 	         CrossoverFunction<FCrossover, XType, std::mt19937>
 	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, const YType& threshold, OS& os) const {
 		std::mt19937 random(seed_);

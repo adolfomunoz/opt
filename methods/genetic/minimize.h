@@ -83,7 +83,11 @@ struct crossover_default<std::tuple<Args...>> {
  *************************************/
 
 template<typename X>
-struct init_default { };
+struct init_default {
+	template<typename RNG>
+	requires UniformRandomBitGenerator<RNG>
+	static auto strategy(RNG& random) { return [] () { return X(); }; }
+};
 
 template<typename X>
 requires std::is_integral_v<X> 

@@ -28,8 +28,12 @@ public:
 		std::uniform_int_distribution<int> sample(0,sizeof...(Args)-1);
 		return mutate_single(t, random, sample(random), std::index_sequence_for<Args...>{});
 	}
-
 };
+
+template<typename... FMutation>
+constexpr auto single_parameter(const FMutation&... mutate_element) {
+	return tuple_single<FMutation...>(mutate_element...);
+}
 
 template<typename... FMutation>
 class tuple_all {
@@ -51,6 +55,11 @@ public:
 		return mutate_all(t, random, std::index_sequence_for<Args...>{});
 	}
 };
+
+template<typename... FMutation>
+constexpr auto all_parameters(const FMutation&... mutate_element) {
+	return tuple_all<FMutation...>(mutate_element...);
+}
 
 
 } //namespace mutation
