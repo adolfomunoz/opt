@@ -22,5 +22,15 @@ public:
 	}
 };
 
+
+class object_method {
+public:
+	template<typename O, typename RNG>
+	requires MutableObject<O,RNG>
+	O operator()(const O& x, RNG& random) const {
+		return x.mutate(random);
+	}	
+};
+
 } // namespace mutation
 } // namespace opt

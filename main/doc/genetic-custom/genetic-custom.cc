@@ -1,43 +1,30 @@
 #include "../../../opt.h"
 #include <cmath>
+#include <random>
 #include <iostream>
 
-
-class Ponger {
-	int value_;
-public:
-	Ponger(int value = 1) : value_(value) { }
-	void ping() { ++value_; if (value_ == 0) ++value_; }
-	void pong() { --value_; if (value_ == 0) --value_; }
-	int value() const { return value_; }
-};
-
 int main(int argc, char** argv) {
-	Ponger p1, p2, p3;
-
-	//Lambda function for mutating Pongers
-	auto mutpon = [] (const Ponger& p, auto& random) {
-		std::uniform_int_distribution<int> choice(0,1);
-		Ponger s = p;
-		switch (choice(random)) {
-			case 0: s.ping(); break;
-			case 1: s.pong(); break;
-		}
-		return s;
-	};
+	double d; 
+	//Calculates the cubic root of 27 (should be 3) with double precision and specific strategies (rather useless, generally speaking)
 	
-	std::tie(p1, p2, p3) = opt::minimize(
-		// Function to minimize with 3 pongers (will return a tuple)
-		[] (const Ponger& a, const Ponger& b, const Ponger& c) {
-			return std::abs(float( (a.value() + b.value() + c.value()) - 
-					(a.value() * b.value() * c.value() ) ) );
-		},
+	d = opt::minimize(
+		//Function to minimize
+		[] (double r) { return std::abs(27.0 - r*r*r); }, 
 		// Genetic method with 100 iterations, 10 population, 10 mutations and 5 crossovers per iteration
 		opt::genetic(100,10,10,5),
-		// Each mutation: mutate one ponger, either ping or pong.
-		// The same mutation strategy for the three function parameters
-		opt::mutation::single_parameter(mutpon, mutpon, mutpon)
+		// Mutation strategy: linear probability from distance 0 to 10
+		[] (double r, auto& random) {	
+			std::array<double,3> values{r-10.0, r, r+10.0};
+			std::array<double,3> probs{0.0, 1.0, 0.0};
+			std::piecewise_linear_distribution<double> d(values.begin(), values.end(), probs.begin());
+			return d(random);		
+		},
+		// Crossover strategy: linear interpolation
+		[] (double r1, double r2, auto& random) {
+			std::uniform_real_distribution<double> d(r1,r2);
+			return d(random);
+		}
 	);
 	
-	std::cout<<p1.value()<<" - "<<p2.value()<<" - "<<p3.value()<<std::endl;
+	std::cout<<d<<std::endl;
 }

@@ -8,14 +8,14 @@
 
 namespace opt {
 
-template <typename FMutation, typename XType, typename RNG>
+template <typename FMutation, typename XType, typename RNG = std::mt19937>
 concept bool MutationFunction = 
    UniformRandomBitGenerator<RNG> &&
    requires(FMutation f, const XType& a, XType b, RNG& rng) {
 	b = f(a, rng);
    };
 
-template <typename FCrossover, typename XType, typename RNG>
+template <typename FCrossover, typename XType, typename RNG = std::mt19937>
 concept bool CrossoverFunction = 
    UniformRandomBitGenerator<RNG> &&
    requires(FCrossover f, const XType& a1, const XType& a2, XType b, RNG& rng) {
@@ -26,6 +26,12 @@ template<typename FTarget, typename XType, typename YType>
 concept bool TargetFunction =
    requires(FTarget f, const XType& x, YType y) {
 	y = f(x);
+   };
+
+template<typename O, typename RNG = std::mt19937>
+concept bool MutableObject =
+   requires(O a, O b, RNG& random) { 
+       b = a.mutate(random);
    };
 
 template<typename Method>
