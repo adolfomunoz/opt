@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 This library depends on [callable.hpp](https://github.com/sth/callable.hpp) for function traits.
 
 ## Disclaimer
-This code is released under the [MIT License](https://en.wikipedia.org/wiki/MIT_License). In practice, if you use this code I'd like the following to happen:
+This code is released under the [GPL-3.0 license](https://www.gnu.org/licenses/gpl-3.0.en.html). In practice, if you use this code I'd like the following to happen:
 * Let me know that you are using it.
 * Let me know how can it be improved.
 
