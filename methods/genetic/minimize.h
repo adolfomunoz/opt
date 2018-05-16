@@ -142,15 +142,31 @@ struct init_default<std::tuple<Args...>> {
 template<typename Method, typename F, 
 	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
 	typename YType = decltype(std::declval<F>()(std::declval<XType>())),
+	typename InitialPopulation, typename FMutation, typename FCrossover>
+requires GeneticMethod<Method> &&
+         TargetFunction<F,XType,YType> &&
+	 Collection<InitialPopulation> &&
+	 std::is_same_v<InitialPopulation,XType> &&
+	 MutationFunction<FMutation, XType> &&
+	 CrossoverFunction<FCrossover, XType>
+XType minimize(const F& f, const Method& method, const InitialPopulation& initial_population, const FMutation& mutation_strategy, const FCrossover& crossover_strategy) {
+	null_ostream os;
+	std::mt19937 random;
+	return method.minimize(initial_population, f, mutation_strategy, crossover_strategy, YType(1.e-6), os);
+}
+
+
+
+template<typename Method, typename F, 
+	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
+	typename YType = decltype(std::declval<F>()(std::declval<XType>())),
 	typename FMutation, typename FCrossover>
 requires GeneticMethod<Method> &&
          TargetFunction<F,XType,YType> &&
 	 MutationFunction<FMutation, XType> &&
 	 CrossoverFunction<FCrossover, XType>
 XType minimize(const F& f, const Method& method, const FMutation& mutation_strategy, const FCrossover& crossover_strategy) {
-	null_ostream os;
-	std::mt19937 random;
-	return method.minimize(initialization::population(100,init_default<XType>::strategy(random)), f, mutation_strategy, crossover_strategy, YType(1.e-6), os);
+	return minimize(f, method, initialization::population(100,init_default<XType>::strategy(random)), mutation_strategy, crossover_strategy);
 }
 
 
