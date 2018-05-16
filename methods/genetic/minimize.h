@@ -145,14 +145,13 @@ template<typename Method, typename F,
 	typename InitialPopulation, typename FMutation, typename FCrossover>
 requires GeneticMethod<Method> &&
          TargetFunction<F,XType,YType> &&
-	 Collection<InitialPopulation> &&
-	 std::is_same_v<InitialPopulation,XType> &&
+	 Container<InitialPopulation> &&
+//	 std::is_same_v<InitialPopulation::value_type,XType> &&
 	 MutationFunction<FMutation, XType> &&
 	 CrossoverFunction<FCrossover, XType>
 XType minimize(const F& f, const Method& method, const InitialPopulation& initial_population, const FMutation& mutation_strategy, const FCrossover& crossover_strategy) {
 	null_ostream os;
-	std::mt19937 random;
-	return method.minimize(initial_population, f, mutation_strategy, crossover_strategy, YType(1.e-6), os);
+	return method.minimize(initial_population, f, mutation_strategy, crossover_strategy, YType(1.e-10), os);
 }
 
 
@@ -166,6 +165,7 @@ requires GeneticMethod<Method> &&
 	 MutationFunction<FMutation, XType> &&
 	 CrossoverFunction<FCrossover, XType>
 XType minimize(const F& f, const Method& method, const FMutation& mutation_strategy, const FCrossover& crossover_strategy) {
+	std::mt19937 random;
 	return minimize(f, method, initialization::population(100,init_default<XType>::strategy(random)), mutation_strategy, crossover_strategy);
 }
 

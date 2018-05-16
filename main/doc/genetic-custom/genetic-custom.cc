@@ -3,15 +3,13 @@
 #include <random>
 #include <iostream>
 
-int main(int argc, char** argv) {
-	double d; 
-	//Calculates the cubic root of 27 (should be 3) with double precision and specific strategies (rather useless, generally speaking)
-	
-	d = opt::minimize(
+int main(int argc, char** argv) { 
+	//Calculates the cubic root of 27 (should be 3) with double precision and specific strategies
+	std::cout<< opt::minimize(
 		//Function to minimize
 		[] (double r) { return std::abs(27.0 - r*r*r); }, 
 		// Genetic method with 100 iterations, 10 population, 10 mutations and 5 crossovers per iteration
-		opt::genetic(100,10,10,5),
+		opt::genetic(1000,10,10,5),
 		//Starting population: uniformly distributed values from -100 to 100
 		std::vector<double>{-100.0,-50.0, 0.0, 50.0, 100.0}, 
 		// Mutation strategy: linear probability from distance 0 to 10
@@ -26,7 +24,5 @@ int main(int argc, char** argv) {
 			std::uniform_real_distribution<double> d(r1,r2);
 			return d(random);
 		}
-	);
-	
-	std::cout<<d<<std::endl;
+	)<<std::endl;
 }
