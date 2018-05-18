@@ -7,6 +7,27 @@
 
 namespace opt {
 
+namespace mutation {
+template <typename I>
+requires std::is_integral_v<I>
+class int_uniform {
+	I imin, imax;
+public:
+	int_uniform(I imin, I irmax) :
+		imin(imin), imax(imax) { }
+		
+	template<typename RNG>
+	requires UniformRandomBitGenerator<RNG> 
+	I operator()(const I& c, RNG& random) const {
+		//The input c is just ignored
+		std::uniform_int_distribution<I> sample(imin, imax);
+	       	return sample(random);
+	}
+};
+
+};
+
+
 namespace initialization {
 
 template<typename I, typename RNG>

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "concepts.h"
+#include "int.h"
+#include "real.h"
 
 namespace opt {
 namespace mutation {
@@ -21,6 +23,14 @@ public:
 		return s;
 	}
 };
+
+template<typename N>
+requires std::is_integral_v<N>
+int_uniform<N> numeric_uniform(const N& nmin, const N& nmax) { return int_uniform<N>(nmin, nmax); }
+
+template<typename N>
+requires std::is_floating_point_v<N>
+real_uniform<N> numeric_uniform(const N& nmin, const N& nmax) { return real_uniform<N>(nmin, nmax); }
 
 
 class object_method {
