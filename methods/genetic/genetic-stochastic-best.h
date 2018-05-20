@@ -144,8 +144,8 @@ public:
 		std::vector<std::tuple<XType,YType>> initial_population; //tuple contains both and xvalue and its fitness
 		for (const XType& x: ini) initial_population.push_back(std::tuple(x,f(x)));
 
-		std::vector<std::tuple<XType,YType>> population(npopulation_ + nmutations_ + ncrossovers_);
-		std::vector<std::tuple<XType,YType>> population_next(npopulation_ + nmutations_ + ncrossovers_);		
+		std::vector<std::tuple<XType,YType>> population(npopulation_ + nmutations_ + ncrossovers_, initial_population.front()); //We initialized with a value in order to avoid the need of XType to be DefaultConstructible
+		std::vector<std::tuple<XType,YType>> population_next(npopulation_ + nmutations_ + ncrossovers_, initial_population.front());		
 
 		selection<XType,YType>(initial_population.begin(), initial_population.end(), population.begin(), random);
 

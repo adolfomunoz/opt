@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 			return std::abs(float( (a.value() + b.value() + c.value()) - (a.value() * b.value() * c.value() ) ) );
 		},
 		// Genetic method with 100 iterations, 10 population, 10 mutations and 5 crossovers per iteration
-		opt::genetic(100,10,10,5)
+		opt::genetic()
 	);
 	
 	std::cout<<p1.value()<<" - "<<p2.value()<<" - "<<p3.value()<<std::endl;

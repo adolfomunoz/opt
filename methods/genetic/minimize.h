@@ -2,6 +2,7 @@
 
 #include <array>
 #include "concepts.h"
+#include "crossover.h"
 #include "bitwise.h"
 #include "vector.h"
 #include "initialization.h"
@@ -55,13 +56,19 @@ template<typename X>
 struct crossover_default { };
 
 template<typename X>
-requires (sizeof(X) == 4)
+requires CrossableObject<X>
+struct crossover_default<X> {
+	static constexpr auto strategy = crossover::object_method();
+};
+
+template<typename X>
+requires (sizeof(X) == 4)  && (!RandomAccessContainer<X>) && (!CrossableObject<X>)
 struct crossover_default<X> {
 	static constexpr auto strategy = crossover::bit32_onepoint();
 };
 
 template<typename X>
-requires (sizeof(X) == 8)
+requires (sizeof(X) == 8)  && (!RandomAccessContainer<X>) && (!CrossableObject<X>)
 struct crossover_default<X> {
 	static constexpr auto strategy = crossover::bit64_onepoint();
 };
@@ -154,6 +161,17 @@ XType minimize(const F& f, const Method& method, const InitialPopulation& initia
 	return method.minimize(initial_population, f, mutation_strategy, crossover_strategy, YType(1.e-10), os);
 }
 
+template<typename Method, typename F, 
+	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
+	typename YType = decltype(std::declval<F>()(std::declval<XType>())),
+	typename InitialPopulation>
+requires GeneticMethod<Method> &&
+         TargetFunction<F,XType,YType> &&
+	 Container<InitialPopulation> 
+//	 std::is_same_v<InitialPopulation::value_type,XType> 
+XType minimize(const F& f, const Method& method, const InitialPopulation& initial_population) {
+	return minimize(f,method, initial_population, mutation_default<XType>::strategy, crossover_default<XType>::strategy);
+}
 
 
 template<typename Method, typename F, 

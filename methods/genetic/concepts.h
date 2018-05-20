@@ -34,6 +34,13 @@ concept bool MutableObject =
        b = a.mutate(random);
    };
 
+template<typename O, typename RNG = std::mt19937>
+concept bool CrossableObject =
+   requires(O a, O b, O c, RNG& random) { 
+       c = a.cross(b, random);
+   };
+
+
 template<typename Method>
 concept bool GeneticMethod =
     requires(const Method& m, std::function<float(float)> target, const std::array<float,1>& init, float sol) {
