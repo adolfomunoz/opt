@@ -29,10 +29,7 @@ int main(int argc, char** argv) {
 		// Function to minimize with 3 pongers (will return a tuple)
 		[] (const Ponger& a, const Ponger& b, const Ponger& c) {
 			return std::abs(float( (a.value() + b.value() + c.value()) - (a.value() * b.value() * c.value() ) ) );
-		},
-		// Genetic method with 100 iterations, 10 population, 10 mutations and 5 crossovers per iteration
-		opt::genetic()
-	);
+		}, opt::genetic());
 	
 	std::cout<<p1.value()<<" - "<<p2.value()<<" - "<<p3.value()<<std::endl;
 }
