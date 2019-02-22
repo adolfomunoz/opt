@@ -37,6 +37,39 @@ elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
    message(STATUS "D.Flags   = ${CMAKE_CXX_FLAGS_DEBUG}")
 endif()
 
+####################################################################
+# PATHS
+####################################################################
+if (NOT EXECUTABLE_OUTPUT_PATH)
+	set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+endif()
+if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+endif()
+if (NOT LIBRARY_OUTPUT_DIRECTORY)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+endif()
+if (NOT EXTERNAL_INSTALL_LOCATION)
+	set(EXTERNAL_INSTALL_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external)
+endif()
+
+
+if (NOT IS_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+	file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+endif()
+if (NOT IS_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+	file(MAKE_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+endif()
+if (NOT IS_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+	file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+endif()
+if (NOT IS_DIRECTORY ${EXTERNAL_INSTALL_LOCATION})
+	file(MAKE_DIRECTORY ${EXTERNAL_INSTALL_LOCATION})
+endif()
+
+
+
+
 ##################################################################################
 # EXTERNAL LIBRARIES
 ##################################################################################
@@ -48,9 +81,7 @@ if (${BUILD_OFFLINE})
                  PROPERTY EP_UPDATE_DISCONNECTED 1)
 endif()
 
-
 include(ExternalProject)
-set(EXTERNAL_INSTALL_LOCATION ${opt_SOURCE_DIR}/external)
 # callable_traits (useful for parameter-type deduction for general stuff)
 
 ExternalProject_Add(callable
@@ -62,17 +93,9 @@ ExternalProject_Add(callable
 )
 
 ##################################################################################
-# PATHS
+# INCLUDE
 ##################################################################################
-
-# Path for output executable files
-IF(NOT (IS_DIRECTORY "${opt_SOURCE_DIR}/bin"))
-  file(MAKE_DIRECTORY "${opt_SOURCE_DIR}/bin")
-endif()
-set(EXECUTABLE_OUTPUT_PATH "${opt_SOURCE_DIR}/bin")
-
-# Base include directory
-include_directories(${opt_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # External include directory
 include_directories(${EXTERNAL_INSTALL_LOCATION})
