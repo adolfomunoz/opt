@@ -147,7 +147,7 @@ struct init_default<std::tuple<Args...>> {
  * Default calls strategies *
  *************************************/
 template<typename Method, typename F, 
-	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
+	typename XType = typename std::decay_t<typename callable_traits<F>::template argument_type<0>>, 
 	typename YType = decltype(std::declval<F>()(std::declval<XType>())),
 	typename InitialPopulation, typename FMutation, typename FCrossover>
 requires GeneticMethod<Method> &&
@@ -161,8 +161,10 @@ XType minimize(const F& f, const Method& method, const InitialPopulation& initia
 	return method.minimize(initial_population, f, mutation_strategy, crossover_strategy, YType(1.e-10), os);
 }
 
+
+
 template<typename Method, typename F, 
-	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
+	typename XType = typename std::decay_t<typename callable_traits<F>::template argument_type<0>>, 
 	typename YType = decltype(std::declval<F>()(std::declval<XType>())),
 	typename InitialPopulation>
 requires GeneticMethod<Method> &&
@@ -210,7 +212,6 @@ requires GeneticMethod<Method> &&
 XType minimize(const F& f, const Method& method, const FMutation& mutation_strategy) {
 	return minimize(f,method, mutation_strategy, crossover_default<XType>::strategy);
 }
-
 
 template<typename Method, typename F, 
 	typename XType = typename std::remove_cv_t<typename std::remove_reference_t<typename callable_traits<F>::template argument_type<0>>>, 
