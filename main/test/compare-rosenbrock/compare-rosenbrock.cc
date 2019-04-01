@@ -35,6 +35,25 @@ void test_method(const char* name, const testfunction::rosenbrock& f, const Meth
 						<<sol<<"\t| Value at result = "<<f(sol)<<"\t| Error = "<< f.error(sol)<<std::endl;
 }
 
+void test_method(const char* name, const testfunction::rosenbrock& f, const opt::GeneticStochasticBest& method) {
+	auto logger = opt::genetic_logger::null();
+	auto start = std::chrono::system_clock::now();
+	std::mt19937 random;
+	std::array<float,2> sol = method.minimize(
+			opt::initialization::population(100, 
+					opt::initialization::array<2>(opt::initialization::real_uniform(random, -100.0f, 100.0f))),
+			f, 
+			opt::mutation::vector_single(opt::mutation::real_normal(1.0f)),
+			opt::crossover::vector_onepoint(),
+			1.e-4f,
+			logger); 
+	auto stop = std::chrono::system_clock::now();
+	std::chrono::duration<float> duration = stop - start;
+	std::cout<<std::setw(20)<<name<<"\t| Time = "<<std::setw(10)<<std::setprecision(3)<<duration.count()<<" sec.\t| Result = "
+						<<sol<<"\t| Value at result = "<<f(sol)<<"\t| Error = "<< f.error(sol)<<std::endl;
+
+}
+
 template<typename Method>
 requires opt::GeneticMethod<Method>
 void test_method(const char* name, const testfunction::rosenbrock& f, const Method& method) {

@@ -13,6 +13,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<float,2>& a) {
 template<typename Method>
 requires opt::GeneticMethod<Method>
 void test_method(const char* name, const testfunction::rosenbrock& f, const Method& method) {
+	auto logger = opt::genetic_logger::stream(std::cout);
 	auto start = std::chrono::system_clock::now();
 	std::mt19937 random;
 	std::array<float,2> sol = method.minimize(
@@ -22,7 +23,7 @@ void test_method(const char* name, const testfunction::rosenbrock& f, const Meth
 			opt::mutation::vector_single(opt::mutation::real_normal(1.0f)),
 			opt::crossover::vector_onepoint(),
 			1.e-4f,
-			std::cout); 
+			logger); 
 	auto stop = std::chrono::system_clock::now();
 	std::chrono::duration<float> duration = stop - start;
 	std::cout<<std::setw(20)<<name<<"\t| Time = "<<std::setw(10)<<std::setprecision(3)<<duration.count()<<" sec.\t| Result = "

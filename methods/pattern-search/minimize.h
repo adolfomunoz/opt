@@ -3,6 +3,7 @@
 #include "../../utils/null-ostream.h"
 #include "../../utils/concepts.h"
 #include "../../utils/tuple-array.h"
+#include "logger.h"
 
 namespace opt {
 
@@ -13,8 +14,8 @@ namespace opt {
 template<typename F, typename XType, typename YType = decltype(std::declval<F>()(std::declval<XType>()))>
 requires TargetFunction<F,XType,YType> && Container<XType>
 XType minimize(const F& f, const PatternSearch& method, const XType& ini) {
-	null_ostream os;
-	return method.minimize(ini, f, os);
+	auto logger = pattern_search_logger::null();
+	return method.minimize(ini, f, logger);
 }
 
 template<typename F, 

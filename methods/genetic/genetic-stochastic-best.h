@@ -18,7 +18,7 @@ namespace opt {
 class GeneticStochasticBest
 {
 private:
-	unsigned int   iters_;			// number of iterations
+	unsigned long  iters_;			// number of iterations
 	unsigned int   npopulation_;    // population size (for selection)
 	unsigned int   nmutations_;		// number of mutations per iteration
 	unsigned int   ncrossovers_;    // number of crossovers per iteration
@@ -94,18 +94,9 @@ private:
 				}
 	}
 
-	template<typename XType, typename YType, typename OS> 
-	void stream(unsigned long iter, const typename std::vector<std::tuple<XType, YType>>::const_iterator& source_begin, 
-		   const typename std::vector<std::tuple<XType, YType>>::const_iterator& source_end, OS& os) const {
-
-		os<<"["<<std::setw(4)<<iter<<"] -> ";
-		std::for_each(source_begin, source_end, [&os] (const std::tuple<XType, YType>& t) {
-				os<<std::get<0>(t)<<" ("<<std::get<1>(t)<<") | "; });
-		os<<std::endl;
-	}
 
 public:
-	GeneticStochasticBest(unsigned int iters    = 1000,
+	GeneticStochasticBest(unsigned long iters    = 1000,
 		unsigned int npopulation        =   10,
 		unsigned int nmutations         =   10,
 		unsigned int ncrossovers        =   10,
@@ -131,14 +122,14 @@ public:
 	 * - YType can also be accumulated (added), used for random values and initialized from zero
 	 * - OS is an output stream (support for standard binary << and for binary << with XType)
 	 **/
-	template<typename XCollection, typename FTarget, typename FMutation, typename FCrossover, typename YType, typename OS, 
+	template<typename XCollection, typename FTarget, typename FMutation, typename FCrossover, typename YType, typename Logger, 
 			typename XType = typename XCollection::value_type>
 	requires std::is_floating_point_v<YType> &&
 	         Container<XCollection> &&
 	         TargetFunction<FTarget, XType, YType> &&
 	         MutationFunction<FMutation, XType, std::mt19937> &&
 	         CrossoverFunction<FCrossover, XType, std::mt19937>
-	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, const YType& threshold, OS& os) const {
+	XType minimize(const XCollection& ini, const FTarget& f, const FMutation& mutate, const FCrossover& cross, const YType& threshold, Logger& logger) const {
 		std::mt19937 random(seed_);
 		
 		std::vector<std::tuple<XType,YType>> initial_population; //tuple contains both and xvalue and its fitness
@@ -149,7 +140,7 @@ public:
 
 		selection<XType,YType>(initial_population.begin(), initial_population.end(), population.begin(), random);
 
-		stream<XType,YType>(0, population.begin(), population.begin() + npopulation_, os);
+		logger.log(0, population.begin(), population.begin() + npopulation_);
 		
 		for (unsigned long iter = 1; (iter<=iters_) && (std::get<1>(population[0])>threshold);++iter) {
 			crossover<XType,YType>(population.begin(), population.begin() + npopulation_, 
@@ -158,7 +149,7 @@ public:
 					population.begin() + npopulation_ + ncrossovers_, f, mutate, random);
 			selection<XType,YType>(population.begin(), population.end(), population_next.begin(), random); //Unneded in the last iteration
 			std::swap(population, population_next);
-			stream<XType,YType>(iter, population.begin(), population.begin() + npopulation_, os);
+			logger.log(iter, population.begin(), population.begin()+npopulation_);
 		}
 
 		return std::get<0>(population[0]); //Obtain the minimum in the big population (selection puts it on the first position)

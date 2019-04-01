@@ -4,6 +4,23 @@
 #include <cstring>
 #include <chrono>
 
+void test_method(const char* name, float sqrt_of, const opt::GeneticStochasticBest& method) {
+	auto logger = opt::genetic_logger::null();
+	auto start = std::chrono::system_clock::now();
+	std::mt19937 random;
+	float sol = method.minimize(
+			opt::initialization::population(100, opt::initialization::real_uniform<float>(random)),
+			[=] (float x) { return (sqrt_of - x*x)*(sqrt_of - x*x); }, 
+			opt::mutation::bit32_swap(),
+			opt::crossover::bit32_onepoint(),
+			1.e-10f,
+			logger); 
+	auto stop = std::chrono::system_clock::now();
+	std::chrono::duration<float> duration = stop - start;
+	std::cout<<std::setw(20)<<name<<"\t| Time = "<<std::setw(10)<<std::setprecision(3)<<duration.count()<<" sec.\t| Error = "<<std::setw(7)<<100.0f*(fabs(std::sqrt(sqrt_of) - fabs(sol))/std::sqrt(sqrt_of))<<" \%"<<std::endl;
+
+}
+
 template<typename Method>
 void test_method(const char* name, float sqrt_of, const Method& method) {
 	null_ostream os;

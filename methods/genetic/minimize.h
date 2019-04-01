@@ -6,6 +6,7 @@
 #include "bitwise.h"
 #include "vector.h"
 #include "initialization.h"
+#include "logger.h"
 #include <callable/callable.hpp>
 #include "../../utils/null-ostream.h"
 #include "../../utils/concepts.h"
@@ -157,8 +158,8 @@ requires GeneticMethod<Method> &&
 	 MutationFunction<FMutation, XType> &&
 	 CrossoverFunction<FCrossover, XType>
 XType minimize(const F& f, const Method& method, const InitialPopulation& initial_population, const FMutation& mutation_strategy, const FCrossover& crossover_strategy) {
-	null_ostream os;
-	return method.minimize(initial_population, f, mutation_strategy, crossover_strategy, YType(1.e-10), os);
+	auto logger = genetic_logger::null();
+	return method.minimize(initial_population, f, mutation_strategy, crossover_strategy, YType(1.e-10), logger);
 }
 
 
