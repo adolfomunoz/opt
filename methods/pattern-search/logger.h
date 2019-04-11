@@ -10,15 +10,6 @@ public:
 	void log(unsigned long iteration, float step, const XType& best, const YType& f_best) {}
 };
 
-class null {
-public:
-	template<typename XType, typename YType>
-	void log(unsigned long iteration, float step, const XType& best, const YType& f_best) {}
-};
-
-
-
-
 template<typename OS>
 class Stream {
 	OS& os;
@@ -27,7 +18,7 @@ public:
 	template<typename XType, typename YType>
 	void log(unsigned long iteration, float step, const XType& best, const YType& f_best) {
 		os << iteration << " ("<<step<<") - "<<f_best<<" - [";
-		for (besti = std::begin(best); besti != std::end(best); ++besti) { os<<" "<<(*besti); }
+		for (auto besti = std::begin(best); besti != std::end(best); ++besti) { os<<" "<<(*besti); }
 		os<<" ]"<<std::endl;
 
 	}
