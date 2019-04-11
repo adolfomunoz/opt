@@ -24,12 +24,12 @@ public:
 		step_size_(step_size),
 		epsilon_(epsilon) {}
 			
-	template<typename XType, typename FTarget, typename OS,
+	template<typename XType, typename FTarget, typename Logger,
 			typename YType = decltype(std::declval<FTarget>()(std::declval<XType>()))>
     		requires std::is_floating_point_v<YType> &&
 	                 Container<XType> &&
 	                 TargetFunction<FTarget, XType, YType> 
-	XType minimize(const XType& ini, const FTarget& f, OS& os) const {
+	XType minimize(const XType& ini, const FTarget& f, Logger& logger) const {
 		XType best   = ini;
 		YType f_best = f(best);
 		decltype(std::begin(best)) besti;
@@ -44,9 +44,7 @@ public:
 		typename std::remove_reference<decltype(*xi)>::type eps = epsilon_; 
 
 		while ((eps < h) && (i <= iters_)) {
-			os << i << " ("<<h<<") - "<<f_best<<" - [";
-			for (besti = std::begin(best); besti != std::end(best); ++besti) { os<<" "<<(*besti); }
-			os<<" ]"<<std::endl;
+			logger.log(i,h,best,f_best);
 			//First we explore the best "neighbour".
 			//This could be done in a more efficient way by avoiding the copy of XTypes and
 			//just using the iterators, but it is easier and cleaner this way.
